@@ -85,7 +85,7 @@ const AppNavigator = (props: Props) => {
             name="ChatSupportScreen"
             component={ChatSupportScreen}
             options={() => ({
-              headerShown: true,
+              headerShown: false,
               headerTitle: 'Chat Support',
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,

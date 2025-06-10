@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   ListRenderItem,
   RefreshControl,
   StyleSheet,
@@ -8,13 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabParamList} from '../../../navigation';
-import {CustomIcons} from '../../../components';
+import {CustomButton, CustomIcons} from '../../../components';
 import {FilterModal, OrderTrackCard} from './components';
 import {OrderDetails} from '../../../types';
 import {useTrackingOrderService} from '../../../services';
+import {exportExcel} from '../../../utils/exportExcel';
 
 const TrackOrderScreen = ({
   navigation,
@@ -25,6 +27,35 @@ const TrackOrderScreen = ({
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   const toggleFilterModal = () => setFilterModalVisible(!filterModalVisible);
+
+  const exportExcelSheet = async () => {
+    try {
+      if (loading.trackOrderData) return;
+      await exportExcel(data || [], 'track');
+    } catch (error) {
+      console.log('Error on excel ->', error);
+    }
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return (
+          <TouchableOpacity onPress={exportExcelSheet}>
+            <Image
+              source={require('../../../assets/excelImage.png')}
+              style={{
+                width: 60,
+                height: 60,
+              }}
+              resizeMethod="scale"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        );
+      },
+    });
+  }, [navigation, loading]);
 
   if (loading.trackOrderData) {
     return (
