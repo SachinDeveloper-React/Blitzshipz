@@ -10,13 +10,18 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {useChatSupportService} from '../../../../services';
 import {MessageBubble, ChatInputBar, ImagePreview} from './components';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../../navigation';
+import {goBack, RootStackParamList} from '../../../../navigation';
+import {StatusBarHeight} from '../../../../utils';
+import {StatusBar} from 'react-native';
+import {CustomIcons} from '../../../../components';
 type Props = NativeStackScreenProps<RootStackParamList, 'ChatSupportScreen'>;
+
 const ChatSupportScreen = ({navigation, route}: Props) => {
   const {AWB_NO, category_SubCategory, status, ticketId, id} = route.params;
   const {
@@ -48,41 +53,41 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
     }
   };
 
-  const headerHeight = useHeaderHeight();
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: () => (
-        <View>
-          <Text style={styles.ticketId} numberOfLines={1}>
-            {ticketId}
-          </Text>
-          <Text style={styles.awb} numberOfLines={1}>
-            {AWB_NO}
-          </Text>
-        </View>
-      ),
-      headerRight: () => (
-        <View style={{marginRight: 10}}>
-          <Text numberOfLines={1} style={styles.category}>
-            {category_SubCategory}
-          </Text>
-          <Text
-            numberOfLines={1}
-            style={[
-              styles.status,
-              {
-                color: getStatusColor(status),
-              },
-            ]}>
-            {status}
-          </Text>
-        </View>
-      ),
-      headerBackButtonDisplayMode: 'minimal',
-      headerBackButtonMenuEnabled: true,
-      headerTitleAlign: 'left',
-    });
-  }, [navigation]);
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerShown: false,
+  //     headerTitle: () => (
+  //       <View>
+  //         <Text style={styles.ticketId} numberOfLines={1}>
+  //           {ticketId}
+  //         </Text>
+  //         <Text style={styles.awb} numberOfLines={1}>
+  //           {AWB_NO}
+  //         </Text>
+  //       </View>
+  //     ),
+  //     headerRight: () => (
+  //       <View style={{marginRight: 10}}>
+  //         <Text numberOfLines={1} style={styles.category}>
+  //           {category_SubCategory}
+  //         </Text>
+  //         <Text
+  //           numberOfLines={1}
+  //           style={[
+  //             styles.status,
+  //             {
+  //               color: getStatusColor(status),
+  //             },
+  //           ]}>
+  //           {status}
+  //         </Text>
+  //       </View>
+  //     ),
+  //     headerBackButtonDisplayMode: 'minimal',
+  //     headerBackButtonMenuEnabled: true,
+  //     headerTitleAlign: 'left',
+  //   });
+  // }, [navigation]);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -100,18 +105,71 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar translucent={false} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{flex: 1}}
-        keyboardVerticalOffset={
-          Platform.OS === 'ios'
-            ? headerHeight
-            : keyboardStatus
-            ? headerHeight / 2
-            : 0
-        }>
+        keyboardVerticalOffset={0}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingTop: StatusBarHeight + 15,
+            backgroundColor: '#fff',
+            padding: 15,
+            elevation: 2,
+            shadowColor: '#ccc',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+            }}>
+            <Pressable onPress={goBack} style={{width: 20}}>
+              <CustomIcons
+                name="arrowleft"
+                type="AntDesign"
+                size={20}
+                color="#000"
+              />
+            </Pressable>
+            <View>
+              <Text style={styles.ticketId} numberOfLines={1}>
+                {ticketId}
+              </Text>
+              {AWB_NO && (
+                <Text style={styles.awb} numberOfLines={1}>
+                  {AWB_NO}
+                </Text>
+              )}
+            </View>
+          </View>
+          <View>
+            <Text numberOfLines={1} style={styles.category}>
+              {category_SubCategory}
+            </Text>
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.status,
+                {
+                  color: getStatusColor(status),
+                },
+              ]}>
+              {status}
+            </Text>
+          </View>
+        </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{flex: 1}}>
+          <>
             {loading ? (
               <ActivityIndicator size={'small'} style={{flex: 1}} />
             ) : (
@@ -147,7 +205,7 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
               amplitudeArray={amplitudeArray}
               scrollViewRef={scrollViewRef}
             />
-          </View>
+          </>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
