@@ -57,6 +57,17 @@ const TrackingApi = {
       return errorHandler(error);
     }
   },
+  trackOrderListWithExcelSheet: async (body: {}, page: number | string) => {
+    try {
+      const response = await ApiClient.post(
+        `${URLS.TRACK.TRACKORDERWITHFILTER}?page=${page}&size=400000`,
+        body,
+      );
+      return responseHandler(response);
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
 };
 
 export default TrackingApi;

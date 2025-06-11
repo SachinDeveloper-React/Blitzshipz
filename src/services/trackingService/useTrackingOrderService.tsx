@@ -19,7 +19,10 @@ const useTrackingOrderService = () => {
     trackOrderData: false,
     refreshTrackOrderData: false,
     loadMoreTrackOrderData: false,
+    excelDataLoading: true,
   });
+
+  const [excelData, setExcelData] = useState([]);
 
   const trackOrderDeatils = async (
     body: {
@@ -67,6 +70,30 @@ const useTrackingOrderService = () => {
     }
   };
 
+  const trackOrderDeatilsForExcel = async (body: {}) => {
+    try {
+      setLoading(prev => ({
+        ...prev,
+        excelDataLoading: true,
+      }));
+      const response = await TrackingApi.trackOrderListWithExcelSheet(body, 0);
+
+      if (response.code === 200 && !response.error) {
+        setExcelData(response.data.content);
+      } else {
+        setExcelData([]);
+      }
+    } catch (error) {
+      console.log(`DEBUG: ${error}`);
+      setExcelData([]);
+    } finally {
+      setLoading(prev => ({
+        ...prev,
+        excelDataLoading: false,
+      }));
+    }
+  };
+
   const onRefresh = (body: {
     day?: number;
     fromDate?: Date | null;
@@ -108,10 +135,24 @@ const useTrackingOrderService = () => {
     );
   };
   useEffect(() => {
-    trackOrderDeatils({status: null}, 0);
+    (async () => {
+      await Promise.all([
+        trackOrderDeatils({status: null}, 0),
+        trackOrderDeatilsForExcel({}),
+      ]);
+    })();
   }, []);
 
-  return {data, onRefresh, loading, filter, filterApply, onFilter, loadMore};
+  return {
+    data,
+    onRefresh,
+    loading,
+    filter,
+    filterApply,
+    onFilter,
+    loadMore,
+    excelData,
+  };
 };
 
 export default useTrackingOrderService;

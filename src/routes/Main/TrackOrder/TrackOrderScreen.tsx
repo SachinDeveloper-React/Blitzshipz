@@ -22,16 +22,24 @@ const TrackOrderScreen = ({
   navigation,
   route,
 }: NativeStackScreenProps<BottomTabParamList, 'TrackOrderScreen'>) => {
-  const {data, onRefresh, loading, onFilter, filterApply, filter, loadMore} =
-    useTrackingOrderService();
+  const {
+    data,
+    excelData,
+    onRefresh,
+    loading,
+    onFilter,
+    filterApply,
+    filter,
+    loadMore,
+  } = useTrackingOrderService();
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   const toggleFilterModal = () => setFilterModalVisible(!filterModalVisible);
 
   const exportExcelSheet = async () => {
     try {
-      if (loading.trackOrderData) return;
-      await exportExcel(data || [], 'track');
+      if (loading.excelDataLoading) return;
+      await exportExcel(excelData || [], 'track');
     } catch (error) {
       console.log('Error on excel ->', error);
     }
@@ -42,15 +50,19 @@ const TrackOrderScreen = ({
       headerRight: () => {
         return (
           <TouchableOpacity onPress={exportExcelSheet}>
-            <Image
-              source={require('../../../assets/excelImage.png')}
-              style={{
-                width: 60,
-                height: 60,
-              }}
-              resizeMethod="scale"
-              resizeMode="contain"
-            />
+            {loading.excelDataLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Image
+                source={require('../../../assets/excelImage.png')}
+                style={{
+                  width: 60,
+                  height: 60,
+                }}
+                resizeMethod="scale"
+                resizeMode="contain"
+              />
+            )}
           </TouchableOpacity>
         );
       },

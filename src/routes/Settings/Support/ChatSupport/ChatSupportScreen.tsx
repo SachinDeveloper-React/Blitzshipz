@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   Pressable,
 } from 'react-native';
-import {useHeaderHeight} from '@react-navigation/elements';
+
 import {useChatSupportService} from '../../../../services';
 import {MessageBubble, ChatInputBar, ImagePreview} from './components';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -169,44 +169,39 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
           </View>
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <>
-            {loading ? (
-              <ActivityIndicator size={'small'} style={{flex: 1}} />
-            ) : (
-              <FlatList
-                data={messages}
-                keyExtractor={(item, i) => i.toString()}
-                showsVerticalScrollIndicator={false}
-                renderItem={({item}) => <MessageBubble item={item} />}
-                contentContainerStyle={{padding: 16, flexGrow: 1}}
-                inverted
-                keyboardShouldPersistTaps="handled"
-              />
-            )}
-            {selectedImage?.imageUri && (
-              <ImagePreview
-                imageUri={selectedImage.imageUri}
-                onRemove={() =>
-                  setSelectedImage({
-                    imageUri: '',
-                    imageData: {},
-                  })
-                }
-              />
-            )}
-
-            <ChatInputBar
-              input={input}
-              setInput={setInput}
-              handleSend={handleSend}
-              handleAttachment={handleAttachment}
-              recording={recording}
-              onStopRecord={onStopRecord}
-              amplitudeArray={amplitudeArray}
-              scrollViewRef={scrollViewRef}
-            />
-          </>
+          <FlatList
+            data={messages}
+            keyExtractor={(item, i) => i.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item}) => <MessageBubble item={item} />}
+            contentContainerStyle={{padding: 16, flexGrow: 1}}
+            inverted
+            keyboardShouldPersistTaps="handled"
+          />
         </TouchableWithoutFeedback>
+
+        {selectedImage?.imageUri && (
+          <ImagePreview
+            imageUri={selectedImage.imageUri}
+            onRemove={() =>
+              setSelectedImage({
+                imageUri: '',
+                imageData: {},
+              })
+            }
+          />
+        )}
+
+        <ChatInputBar
+          input={input}
+          setInput={setInput}
+          handleSend={handleSend}
+          handleAttachment={handleAttachment}
+          recording={recording}
+          onStopRecord={onStopRecord}
+          amplitudeArray={amplitudeArray}
+          scrollViewRef={scrollViewRef}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
