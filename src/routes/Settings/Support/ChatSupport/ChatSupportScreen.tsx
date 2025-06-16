@@ -40,6 +40,7 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
     setSelectedImage,
   } = useChatSupportService({ticketID: id});
   const [keyboardStatus, setKeyboardStatus] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
       case 'RESOLVED':
@@ -53,47 +54,46 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
     }
   };
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerShown: false,
-  //     headerTitle: () => (
-  //       <View>
-  //         <Text style={styles.ticketId} numberOfLines={1}>
-  //           {ticketId}
-  //         </Text>
-  //         <Text style={styles.awb} numberOfLines={1}>
-  //           {AWB_NO}
-  //         </Text>
-  //       </View>
-  //     ),
-  //     headerRight: () => (
-  //       <View style={{marginRight: 10}}>
-  //         <Text numberOfLines={1} style={styles.category}>
-  //           {category_SubCategory}
-  //         </Text>
-  //         <Text
-  //           numberOfLines={1}
-  //           style={[
-  //             styles.status,
-  //             {
-  //               color: getStatusColor(status),
-  //             },
-  //           ]}>
-  //           {status}
-  //         </Text>
-  //       </View>
-  //     ),
-  //     headerBackButtonDisplayMode: 'minimal',
-  //     headerBackButtonMenuEnabled: true,
-  //     headerTitleAlign: 'left',
-  //   });
-  // }, [navigation]);
+  useEffect(() => {
+    navigation.setOptions({
+      // headerShown: true,
+      headerTitle: () => (
+        <View>
+          <Text style={styles.ticketId} numberOfLines={1}>
+            {ticketId}
+          </Text>
+          <Text style={styles.awb} numberOfLines={1}>
+            {AWB_NO}
+          </Text>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginRight: 10}}>
+          <Text numberOfLines={1} style={styles.category}>
+            {category_SubCategory}
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.status,
+              {
+                color: getStatusColor(status),
+              },
+            ]}>
+            {status}
+          </Text>
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyboardHeight(e.endCoordinates?.height);
       setKeyboardStatus(true);
     });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', e => {
+      setKeyboardHeight(e.endCoordinates?.height);
       setKeyboardStatus(false);
     });
 
@@ -107,10 +107,10 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar translucent={false} />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{flex: 1}}
         keyboardVerticalOffset={0}>
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -167,7 +167,7 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
               {status}
             </Text>
           </View>
-        </View>
+        </View> */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <FlatList
             data={messages}
@@ -201,6 +201,7 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
           onStopRecord={onStopRecord}
           amplitudeArray={amplitudeArray}
           scrollViewRef={scrollViewRef}
+          keyboardHeight={Platform.OS === 'ios' ? 0 : keyboardHeight + 16 + 12}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>

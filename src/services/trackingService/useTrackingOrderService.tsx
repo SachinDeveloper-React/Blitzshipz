@@ -70,7 +70,19 @@ const useTrackingOrderService = () => {
     }
   };
 
-  const trackOrderDeatilsForExcel = async (body: {}) => {
+  const trackOrderDeatilsForExcel = async (body: {
+    day?: number;
+    fromDate?: Date | null;
+    orderId?: string;
+    paymentMode?: string;
+    phoneNumber?: string;
+    productCategory?: string;
+    referenceNumber?: string;
+    status?: string | null;
+    toDate?: Date | null;
+    vendorCode?: string;
+    waybill?: string;
+  }) => {
     try {
       setLoading(prev => ({
         ...prev,
@@ -110,7 +122,7 @@ const useTrackingOrderService = () => {
     trackOrderDeatils(body, 0, true);
   };
 
-  const onFilter = (body: {
+  const onFilter = async (body: {
     day?: number;
     fromDate?: Date | null;
     orderId?: string;
@@ -123,7 +135,10 @@ const useTrackingOrderService = () => {
     vendorCode?: string;
     waybill?: string;
   }) => {
-    trackOrderDeatils(body, 0);
+    await Promise.all([
+      trackOrderDeatils(body, 0),
+      trackOrderDeatilsForExcel(body),
+    ]);
   };
 
   const loadMore = () => {

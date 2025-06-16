@@ -18,6 +18,8 @@ const VendorIcons = ({vendorCode, ...props}: Props) => {
           ? require('../assets/logo/Express.png')
           : vendorCode === 'DL'
           ? require('../assets/logo/delhivery.webp')
+          : vendorCode === 'BZ'
+          ? require('../assets/logo/blitz.webp')
           : ''
       }
       style={{

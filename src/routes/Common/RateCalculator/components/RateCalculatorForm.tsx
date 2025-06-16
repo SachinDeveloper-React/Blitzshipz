@@ -30,30 +30,36 @@ const RateCalculatorForm = () => {
   const declaredAmountRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardShown(true);
-    });
-    Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardShown(false);
-    });
+    const showSub = Keyboard.addListener('keyboardDidShow', () =>
+      setKeyboardShown(true),
+    );
+    const hideSub = Keyboard.addListener('keyboardDidHide', () =>
+      setKeyboardShown(false),
+    );
 
     return () => {
-      Keyboard.addListener('keyboardDidShow', () => {
-        setKeyboardShown(true);
-      });
-      Keyboard.addListener('keyboardDidHide', () => {
-        setKeyboardShown(false);
-      });
+      showSub.remove();
+      hideSub.remove();
     };
   }, []);
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1, backgroundColor: '#fff'}}
-      keyboardVerticalOffset={keyboardShown ? headerHeight + 50 : 0}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      keyboardVerticalOffset={
+        Platform.OS === 'android'
+          ? keyboardShown
+            ? headerHeight + 50
+            : 0
+          : headerHeight + 50
+      }
+      style={{flex: 1, backgroundColor: '#fff'}}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
+          {/* All your form inputs here */}
           <CustomPicker
             label="Grade"
             selectedValue={form.grade}
@@ -183,7 +189,6 @@ const RateCalculatorForm = () => {
             label="Declared Amount"
             keyboardType="numeric"
             value={form.declaredAmount}
-            returnKeyType="done"
             onSubmitEditing={onSubmit}
             onChangeText={text => handleChange('declaredAmount', text)}
             error={!!errors.declaredAmount}
@@ -216,8 +221,8 @@ const RateCalculatorForm = () => {
 
 const styles = StyleSheet.create({
   scrollContent: {
+    flex: 1,
     flexGrow: 1,
-    paddingBottom: 40,
   },
   container: {
     flexDirection: 'column',

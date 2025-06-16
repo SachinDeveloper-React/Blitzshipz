@@ -10,7 +10,11 @@ export {
   type NDROrder,
   useRTOStore,
 } from './dasboardStore';
-export {useTrackingStore, useTrackingOrderStore} from './trackingStore';
+export {
+  type TrackOrderState,
+  useTrackingStore,
+  useTrackingOrderStore,
+} from './trackingStore';
 export {useTicketStore} from './settingStore';
 export {
   useProfileAddressDataStore,

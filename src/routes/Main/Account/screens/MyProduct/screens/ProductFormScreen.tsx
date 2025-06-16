@@ -122,16 +122,11 @@ const ProductFormScreen = ({
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={
-          Platform.OS === 'ios'
-            ? headerHeight
-            : keyboardStatus
-            ? headerHeight
-            : 0
-        }>
+        keyboardVerticalOffset={keyboardStatus ? headerHeight : 0}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
+            automaticallyAdjustKeyboardInsets
             showsVerticalScrollIndicator={false}>
             <View style={styles.field}>
               <Text style={styles.label}>Product Name</Text>
@@ -145,34 +140,42 @@ const ProductFormScreen = ({
 
             <View style={styles.field}>
               <Text style={styles.label}>Category</Text>
-
-              <Picker
-                selectedValue={form.category}
-                onValueChange={(itemValue, itemIndex) => {
-                  handleChange('category', itemValue);
-                }}
+              <View
                 style={{
-                  fontSize: 14,
-                  color: '#000',
-                }}
-                itemStyle={{
-                  fontSize: 14,
-                  color: '#000',
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  marginBottom: 16,
                 }}>
-                {categories.map((item, i) => {
-                  return (
-                    <Picker.Item
-                      key={i}
-                      label={item.categoryName}
-                      value={
-                        item.categoryName === 'Men-Clothings'
-                          ? 'MEN CLOTHING'
-                          : item.categoryName
-                      }
-                    />
-                  );
-                })}
-              </Picker>
+                <Picker
+                  selectedValue={form.category}
+                  onValueChange={(itemValue, itemIndex) => {
+                    handleChange('category', itemValue);
+                  }}
+                  style={{
+                    fontSize: 14,
+                    color: '#000',
+                  }}
+                  itemStyle={{
+                    fontSize: 14,
+                    color: '#000',
+                  }}>
+                  {categories.map((item, i) => {
+                    return (
+                      <Picker.Item
+                        key={i}
+                        label={item.categoryName}
+                        value={
+                          item.categoryName === 'Men-Clothings'
+                            ? 'MEN CLOTHING'
+                            : item.categoryName
+                        }
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
             </View>
 
             <View style={styles.field}>

@@ -18,9 +18,16 @@ const ChatInputBar = ({
   onStopRecord,
   amplitudeArray,
   scrollViewRef,
+  keyboardHeight,
 }: any) => {
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          marginBottom: keyboardHeight,
+        },
+      ]}>
       {recording ? (
         <>
           <TouchableOpacity onPress={onStopRecord}>

@@ -12,7 +12,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabParamList} from '../../../navigation';
-import {CustomButton, CustomIcons} from '../../../components';
+import {CustomIcons} from '../../../components';
 import {FilterModal, OrderTrackCard} from './components';
 import {OrderDetails} from '../../../types';
 import {useTrackingOrderService} from '../../../services';
@@ -132,7 +132,8 @@ export default TrackOrderScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     backgroundColor: '#f6f8fa',
   },
   header: {

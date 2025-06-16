@@ -31,7 +31,10 @@ const AppNavigator = (props: Props) => {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   return (
     <RootStack.Navigator
-      screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+      }}>
       {!isAuthenticated ? (
         <RootStack.Screen name="Auth" component={AuthNavigator} />
       ) : (
@@ -85,10 +88,11 @@ const AppNavigator = (props: Props) => {
             name="ChatSupportScreen"
             component={ChatSupportScreen}
             options={() => ({
-              headerShown: false,
+              headerShown: true,
               headerTitle: 'Chat Support',
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,
+              headerTitleAlign: 'left',
             })}
           />
           <RootStack.Screen
