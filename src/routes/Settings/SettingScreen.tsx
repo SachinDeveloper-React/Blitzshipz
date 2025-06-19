@@ -55,7 +55,7 @@ const SettingScreen = () => {
 
   const navigateToScreen = (screen: string) => {
     if (isValidScreen(screen)) {
-      navigate(SCREENS[screen]); // ✅ Safe here
+      navigate(SCREENS[screen]);
     } else {
       console.warn(`Invalid screen name: ${screen}`);
     }

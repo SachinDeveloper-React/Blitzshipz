@@ -1,25 +1,33 @@
 import {Alert} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {useTicketStore} from '../../store';
 import {SettingApi} from '../../networking';
 import {categories} from '../../routes/Settings/Support/components/helper';
+import {DateType} from 'react-native-ui-datepicker';
 
 type Props = {
   initial: boolean;
 };
 
-const useSettingService = (props: Props) => {
-  const {initial} = props;
+const useSettingService = ({initial}: Props) => {
   const {
     setTickets,
+    appendTickets,
+    setPaginationInfo,
+    setCurrentPage,
+    setLoading,
+    setRefreshLoading,
+    setLoadMoreLoading,
+    setError,
     tickets,
     loading,
-    setLoading,
     refreshLoading,
-    setRefreshLoading,
-    setError,
+    loadMoreLoading,
     error,
+    totalPages,
+    currentPages,
   } = useTicketStore();
+
   const [raisedTicket, setRaisedTicket] = useState({
     category: categories[0],
     subCategory: '',
@@ -28,29 +36,96 @@ const useSettingService = (props: Props) => {
     loadingTicket: false,
   });
 
-  const resetInputs = () => {
-    setRaisedTicket(prev => ({
-      ...prev,
+  const [filterInput, setFilterInput] = useState<{
+    status: string | null;
+    category: string | null;
+    subCategory: string;
+    orderId: string;
+    awbNumber: string;
+    createdDateFrom: string;
+    createdDateTo: string;
+    ticketNumber: string;
+  }>({
+    status: null,
+    category: null,
+    subCategory: '',
+    orderId: '',
+    awbNumber: '',
+    createdDateFrom: '',
+    createdDateTo: '',
+    ticketNumber: '',
+  });
+
+  const categoryList = useMemo(
+    () => [
+      {id: 1, label: 'All', filterOption: null},
+      {id: 2, label: 'NDR', filterOption: 'NDR'},
+      {id: 3, label: 'Technical', filterOption: 'Technical'},
+      {id: 4, label: 'OPS', filterOption: 'OPS'},
+      {id: 5, label: 'Finance', filterOption: 'Finance'},
+      {id: 6, label: 'Lost', filterOption: 'Lost'},
+    ],
+    [],
+  );
+
+  const filterInputList = useMemo(
+    () => [
+      {id: 1, label: 'All', filterOption: null},
+      {id: 2, label: 'Open', filterOption: 'OPEN'},
+      {id: 3, label: 'Raised', filterOption: 'RAISED'},
+      {id: 4, label: 'In Progress', filterOption: 'IN_PROGRESS'},
+      {id: 5, label: 'Pending', filterOption: 'PENDING'},
+      {id: 6, label: 'Resolved', filterOption: 'RESOLVED'},
+    ],
+    [],
+  );
+
+  const resetInputs = useCallback(() => {
+    setRaisedTicket({
       category: categories[0],
+      subCategory: '',
       awbNumber: '',
       description: '',
-      subCategory: '',
       loadingTicket: false,
-    }));
-  };
-  const handleInputs = (
-    type: 'category' | 'subCategory' | 'awbNumber' | 'description',
-    text: (typeof categories)[0] | string,
-  ) => {
-    setRaisedTicket(prev => ({...prev, [type]: text}));
-  };
+    });
+  }, []);
 
-  const onSubmit = async () => {
+  const handleInputs = useCallback(
+    (
+      type: 'category' | 'subCategory' | 'awbNumber' | 'description',
+      text: (typeof categories)[0] | string,
+    ) => {
+      setRaisedTicket(prev => ({...prev, [type]: text}));
+    },
+    [],
+  );
+
+  const handleFilter = useCallback(
+    (
+      type:
+        | 'status'
+        | 'category'
+        | 'subCategory'
+        | 'orderId'
+        | 'awbNumber'
+        | 'createdDateFrom'
+        | 'createdDateTo'
+        | 'ticketNumber',
+      text: string | null,
+    ) => {
+      setFilterInput(prev => ({...prev, [type]: text}));
+    },
+    [],
+  );
+
+  const onSubmit = useCallback(async () => {
+    const {category, subCategory, awbNumber, description} = raisedTicket;
+
     if (
-      !raisedTicket.category?.title?.trim() ||
-      !raisedTicket.subCategory?.trim() ||
-      !raisedTicket.awbNumber?.trim() ||
-      !raisedTicket.description?.trim()
+      !category?.title?.trim() ||
+      !subCategory.trim() ||
+      !awbNumber.trim() ||
+      !description.trim()
     ) {
       Alert.alert('All fields are required.');
       return;
@@ -59,21 +134,17 @@ const useSettingService = (props: Props) => {
     try {
       setRaisedTicket(prev => ({...prev, loadingTicket: true}));
       const body = {
-        awbNumber: raisedTicket.awbNumber.trim(),
-        category: raisedTicket.category.title.trim(),
-        subCategory: raisedTicket.subCategory.trim(),
-        description: raisedTicket.description.trim(),
+        awbNumber: awbNumber.trim(),
+        category: category.title.trim(),
+        subCategory: subCategory.trim(),
+        description: description.trim(),
       };
+
       const response = await SettingApi.raisedTicket(body);
+
       if (response.code === 200 && !response.error) {
         Alert.alert('✅ Success', 'Your ticket has been raised.');
-        setRaisedTicket(prev => ({
-          ...prev,
-          category: categories[0],
-          awbNumber: '',
-          description: '',
-          subCategory: '',
-        }));
+        resetInputs();
         onRefresh();
       } else {
         Alert.alert('❌ Error', response.data || 'Ticket could not be raised.');
@@ -83,47 +154,101 @@ const useSettingService = (props: Props) => {
     } finally {
       setRaisedTicket(prev => ({...prev, loadingTicket: false}));
     }
-  };
+  }, [raisedTicket, resetInputs]);
 
-  const getTicketList = async (refresh?: boolean) => {
-    if (refresh) setRefreshLoading(true);
-    else setLoading(true);
-    try {
-      const body = {
-        status: null,
-        category: '',
-        subCategory: '',
-        orderId: '',
-        awbNumber: '',
-        createdDateFrom: '',
-        createdDateTo: '',
-        ticketNumber: '',
-      };
-      const response = await SettingApi.getTicketList(body);
-      if (response.code === 200) {
-        setTickets(response.data.data.content);
-      } else {
-        console.log('DEBUG: Response give a error');
+  const getTicketList = useCallback(
+    async (
+      refresh = false,
+      next = false,
+      customFilterInput?: typeof filterInput,
+    ) => {
+      const filters = customFilterInput ?? filterInput;
+      const page = next ? currentPages : 0;
+
+      try {
+        if (refresh) setRefreshLoading(true);
+        else if (next) setLoadMoreLoading(true);
+        else setLoading(true);
+
+        const response = await SettingApi.getTicketList(filters, page);
+
+        if (response.code === 200 && response.data.status === 200) {
+          const data = response.data.data;
+
+          if (next) appendTickets(data.content);
+          else setTickets(data.content);
+
+          setPaginationInfo(data.totalPages, data.totalElements);
+          setCurrentPage(page + 1);
+        } else {
+          setTickets([]);
+          setError('Something went wrong.');
+        }
+      } catch (error) {
+        console.log('DEBUG: API call failed', error);
         setError('Something went wrong.');
+      } finally {
+        setRefreshLoading(false);
+        setLoadMoreLoading(false);
+        setLoading(false);
       }
-    } catch (error) {
-      console.log('DEBUG: Response give a error', error);
-      setError('Something went wrong.');
-    } finally {
-      setRefreshLoading(false);
-      setLoading(false);
-    }
-  };
+    },
+    [filterInput, currentPages],
+  );
 
-  const onRefresh = async () => {
+  const loadMore = useCallback(async () => {
+    if (currentPages >= totalPages || loadMoreLoading) return;
+    await getTicketList(false, true);
+  }, [currentPages, totalPages, loadMoreLoading, getTicketList]);
+
+  const onRefresh = useCallback(async () => {
     await getTicketList(true);
-  };
+  }, [getTicketList]);
 
+  const applyFilter = useCallback(
+    async (body: {
+      status: string | null;
+      category: string | null;
+      subCategory: string;
+      orderId: string;
+      awbNumber: string;
+      createdDateFrom: string;
+      createdDateTo: string;
+      ticketNumber: string;
+    }) => {
+      await getTicketList(true, false, {
+        status: body.status,
+        category: body.category,
+        subCategory: body.subCategory,
+        orderId: body.orderId,
+        awbNumber: body.awbNumber,
+        createdDateFrom: body.createdDateFrom,
+        createdDateTo: body.createdDateTo,
+        ticketNumber: body.ticketNumber,
+      });
+    },
+    [getTicketList],
+  );
+
+  // Initial load
   useEffect(() => {
-    if (initial) {
-      getTicketList();
-    }
-  }, []);
+    if (!initial) return;
+    const timeout = setTimeout(() => {
+      getTicketList(true);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [initial]);
+
+  // Debounced filter change
+  useEffect(() => {
+    if (!initial) return;
+
+    const timeout = setTimeout(() => {
+      getTicketList(true, false, filterInput);
+    }, 600);
+    return () => clearTimeout(timeout);
+  }, [filterInput]);
+
   return {
     tickets,
     refreshLoading,
@@ -131,9 +256,15 @@ const useSettingService = (props: Props) => {
     error,
     onRefresh,
     handleInputs,
+    handleFilter,
     onSubmit,
     raisedTicket,
     resetInputs,
+    filterInputList,
+    categoryList,
+    filterInput,
+    loadMore,
+    applyFilter,
   };
 };
 

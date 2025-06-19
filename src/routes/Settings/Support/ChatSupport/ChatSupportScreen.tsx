@@ -20,9 +20,11 @@ import {goBack, RootStackParamList} from '../../../../navigation';
 import {StatusBarHeight} from '../../../../utils';
 import {StatusBar} from 'react-native';
 import {CustomIcons} from '../../../../components';
+import {useHeaderHeight} from '@react-navigation/elements';
 type Props = NativeStackScreenProps<RootStackParamList, 'ChatSupportScreen'>;
 
 const ChatSupportScreen = ({navigation, route}: Props) => {
+  const headerHeight = useHeaderHeight();
   const {AWB_NO, category_SubCategory, status, ticketId, id} = route.params;
   const {
     messages,
@@ -109,7 +111,7 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{flex: 1}}
-        keyboardVerticalOffset={0}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? headerHeight : 0}>
         {/* <View
           style={{
             flexDirection: 'row',

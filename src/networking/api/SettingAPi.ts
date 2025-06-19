@@ -3,18 +3,25 @@ import ApiClient from '../ApiClient';
 import {URLS} from '../Urls';
 
 const SettingApi = {
-  getTicketList: async (body: {
-    status: string | null;
-    category: string;
-    subCategory: string;
-    orderId: string;
-    awbNumber: string;
-    createdDateFrom: string;
-    createdDateTo: string;
-    ticketNumber: string;
-  }) => {
+  getTicketList: async (
+    body: {
+      status: string | null;
+      category: string | null;
+      subCategory: string;
+      orderId: string;
+      awbNumber: string;
+      createdDateFrom: string;
+      createdDateTo: string;
+      ticketNumber: string;
+    },
+    page: number,
+  ) => {
     try {
-      const response = await ApiClient.post(URLS.SETTING.SUPPORT, body);
+      const response = await ApiClient.post(
+        `${URLS.SETTING.SUPPORT}?page=${page}&size=10`,
+        body,
+      );
+
       return responseHandler(response);
     } catch (error) {
       return errorHandler(error);

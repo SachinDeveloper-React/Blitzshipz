@@ -47,25 +47,3 @@ export const categories = [
     ],
   },
 ];
-
-// {
-//   "data": {
-//       "id": "680c674e45d4cc17bf7c68d6",
-//       "ticketNumber": "260425BST01",
-//       "awbNumber": "11038110354491",
-//       "userId": "667bbd9191eee548937add12",
-//       "userRef": "USR002",
-//       "createdDate": "2025-04-26T04:55:42.721+00:00",
-//       "modifyDate": null,
-//       "closedDate": null,
-//       "status": "OPEN",
-//       "description": "Please asap.",
-//       "category": "Operation",
-//       "orderId": null,
-//       "subCategory": "Delay in pickup",
-//       "readBySupport": false
-//   },
-//   "message": "ticket generated!",
-//   "time": 1745643342767,
-//   "status": 200
-// }
