@@ -1,9 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useRTOStore} from '../../store';
-import {DashboardApi} from '../../networking';
-
-type Props = {};
+import {DashboardApi, fetchFilterData} from '../../networking';
+import {exportExcel, formatDate, showToast} from '../../utils';
+import {DateType} from 'react-native-ui-datepicker';
 
 const useDashboardRTOService = () => {
   const {
@@ -26,6 +25,15 @@ const useDashboardRTOService = () => {
   const [selectedTab, setSelectedTab] = useState<
     'In Transit' | 'Dispatched' | 'Delivered'
   >('In Transit');
+
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    toDate: DateType | null;
+    fromDate: DateType | null;
+  }>({
+    toDate: null,
+    fromDate: null,
+  });
 
   const getRTODetailsList = async (
     page: number | string,
@@ -77,6 +85,38 @@ const useDashboardRTOService = () => {
 
   const toggleDropdown = () => setShowStatusDropdown(prev => !prev);
 
+  const exportExcelSheet = async () => {
+    try {
+      if (!dateRange.fromDate || !dateRange.toDate) {
+        showToast('Please Select Date');
+        return;
+      }
+      const body = {
+        day: 0,
+        fromDate: formatDate(dateRange.fromDate) ?? '',
+        orderId: '',
+        paymentMode: '',
+        phoneNumber: '',
+        productCategory: '',
+        referenceNumber: '',
+        status: 'RTO',
+        toDate: formatDate(dateRange.toDate) ?? '',
+        waybill: '',
+      };
+
+      const excelData = await fetchFilterData(body);
+
+      if (excelData.data.content.length <= 0) {
+        showToast('No Data Found');
+        return;
+      }
+
+      await exportExcel(excelData.data.content || [], 'rto');
+    } catch (error) {
+      console.log('Error on excel ->', error);
+    }
+  };
+
   return {
     loading,
     setLoading,
@@ -89,9 +129,12 @@ const useDashboardRTOService = () => {
     onRefresh,
     moreLoad,
     totalElements,
+    exportExcelSheet,
+    isDatePickerVisible,
+    setIsDatePickerVisible,
+    dateRange,
+    setDateRange,
   };
 };
 
 export default useDashboardRTOService;
-
-const styles = StyleSheet.create({});

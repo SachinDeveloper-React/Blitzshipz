@@ -12,3 +12,4 @@ export {default as AddDocumentCard} from './AddDocumentCard';
 export {default as ShownDocument} from './ShownDocument';
 export {HamburgerIcon} from './Icons';
 export {default as VendorIcons} from './VendorIcons';
+export {default as CustomDatePickerModal} from './CustomDatePickerModal';

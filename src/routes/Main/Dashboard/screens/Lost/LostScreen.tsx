@@ -3,10 +3,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import React from 'react';
 import {CustomListing} from '../../../../../components';
 import {useDashboardLostService} from '../../../../../services';
+import {exportExcel} from '../../../../../utils';
 
 type Props = {};
 
@@ -22,8 +25,31 @@ const LostScreen = (props: Props) => {
     );
   }
 
+  const exportExcelSheet = async () => {
+    try {
+      if (lostData.length < 0) return;
+      await exportExcel(lostData || [], 'lost');
+    } catch (error) {
+      console.log('Error on excel ->', error);
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
+      <View
+        style={{
+          paddingHorizontal: 16,
+          alignItems: 'flex-end',
+        }}>
+        <TouchableOpacity onPress={exportExcelSheet}>
+          <Image
+            source={require('../../../../../assets/excelImage.png')}
+            style={{width: 60, height: 60}}
+            resizeMethod="scale"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
       <CustomListing
         data={lostData}
         refreshControl={

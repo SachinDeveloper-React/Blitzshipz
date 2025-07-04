@@ -24,6 +24,11 @@ type RevenueData = {
   date: string;
   revenue: number;
 }[];
+type PickupData = {
+  totalOrders: number;
+  vendorCode: string;
+  vendorOrders: number;
+}[];
 
 type StoreState = {
   startDate: Date;
@@ -31,9 +36,11 @@ type StoreState = {
   overviewData: OverviewData | null;
   revenueData: RevenueData[] | null;
   graphData: GraphDataItem[] | null;
+  pickupData: PickupData[] | null;
   setOverviewData: (data: OverviewData) => void;
   setGraphData: (data: GraphDataItem[]) => void;
   setRevenueData: (data: RevenueData[]) => void;
+  setPickupData: (data: PickupData[]) => void;
   setStartDate: (data: Date) => void;
   setEndDate: (data: Date) => void;
 };
@@ -45,9 +52,11 @@ export const useDasboardStore = create<StoreState>(set => ({
   overviewData: null,
   graphData: null,
   revenueData: null,
+  pickupData: null,
   setOverviewData: data => set({overviewData: data}),
   setRevenueData: data => set({revenueData: data}),
   setGraphData: data => set({graphData: data}),
+  setPickupData: data => set({pickupData: data}),
   setStartDate: date => set({startDate: date}),
   setEndDate: date => set({endDate: date}),
 }));

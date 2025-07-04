@@ -6,6 +6,7 @@ import {
   useProfileDataStore,
 } from '../../store';
 import {ProfileApi, WarehouseApi} from '../../networking';
+import {Asset} from 'react-native-image-picker';
 
 type Props = {
   initial: boolean;
@@ -14,16 +15,23 @@ type Props = {
 const useProfileService = (props: Props) => {
   const {initial} = props;
   const {user} = useAuthStore();
-  const {setUserProfileData, userProfileData} = useProfileDataStore();
+  const {
+    setUserProfileData,
+    userProfileData,
+    setUserProfileDocData,
+    userProfileDoc,
+  } = useProfileDataStore();
   const {addressData, setAddressData} = useProfileAddressDataStore();
 
   const [loading, setLoading] = useState({
     userProfile: true,
     refreshUserProfile: false,
+    profileImage: false,
   });
   const [error, setError] = useState({
     userProfileError: '',
     userWarehouses: '',
+    profileImageError: '',
   });
 
   const getProfileDetail = async () => {
@@ -45,15 +53,33 @@ const useProfileService = (props: Props) => {
       setError(prev => ({...prev, userProfileError: error.message}));
     }
   };
+  const getProfileDocs = async () => {
+    try {
+      if (!user) return;
+      const response = await ProfileApi.getProfileDocs();
+      setUserProfileDocData(response.data);
+    } catch (error: any) {
+      console.log(error);
+      setError(prev => ({...prev, userProfileError: error.message}));
+    }
+  };
 
   const fetchAllData = async () => {
     setLoading(prev => ({...prev, userProfile: true}));
-    await Promise.all([getProfileDetail(), getProfileWarehouses()]);
+    await Promise.all([
+      getProfileDetail(),
+      getProfileDocs(),
+      getProfileWarehouses(),
+    ]);
     setLoading(prev => ({...prev, userProfile: false}));
   };
   const onRefresh = async () => {
     setLoading(prev => ({...prev, refreshUserProfile: true}));
-    await Promise.all([getProfileDetail(), getProfileWarehouses()]);
+    await Promise.all([
+      getProfileDetail(),
+      getProfileDocs(),
+      getProfileWarehouses(),
+    ]);
     setLoading(prev => ({...prev, refreshUserProfile: false}));
   };
 
@@ -81,6 +107,33 @@ const useProfileService = (props: Props) => {
     }
   };
 
+  const uploadProfileImage = async (document: Asset) => {
+    try {
+      setLoading({...loading, profileImage: true});
+      const body = {
+        documents: document,
+        id: userProfileData?.userId ?? '',
+      };
+      const upload = await ProfileApi.updateProfile(body);
+      if (upload.code === 200) {
+        if (upload.data.statusCode === 200) {
+          await getProfileDocs();
+        } else {
+          showToast('Somthing wrong');
+        }
+      } else {
+        showToast('Somthing wrong');
+      }
+    } catch (err: any) {
+      setError({
+        ...error,
+        profileImageError: err?.message ?? 'Unxpected Error',
+      });
+    } finally {
+      setLoading({...loading, profileImage: false});
+    }
+  };
+
   useEffect(() => {
     initial && fetchAllData();
   }, []);
@@ -91,6 +144,8 @@ const useProfileService = (props: Props) => {
     error,
     onRefresh,
     deleteWarehouse,
+    userProfileDoc,
+    uploadProfileImage,
   };
 };
 

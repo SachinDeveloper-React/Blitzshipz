@@ -10,3 +10,4 @@ export {default as WarehouseApi} from './WarehouseApi';
 export {default as CreateOrderApi} from './CreateOrderApi';
 export {default as DocumentApi} from './DocumentApi';
 export {default as RateCalculatorApi} from './RateCalculatorApi';
+export {default as FilterApi} from './FilterApi';

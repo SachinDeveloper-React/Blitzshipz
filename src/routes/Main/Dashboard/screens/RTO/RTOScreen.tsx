@@ -4,12 +4,15 @@ import {
   View,
   ActivityIndicator,
   Pressable,
-  Alert,
+  Image,
+  Text,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {useDashboardRTOService} from '../../../../../services';
-import {CustomText} from '../../../../../components';
+import {CustomDatePickerModal, CustomText} from '../../../../../components';
 import {OrderList} from '../Orders/components';
+import {formatDate} from '../../../../../utils';
+import {moderateScale} from 'react-native-size-matters';
 
 type Props = {};
 
@@ -25,6 +28,11 @@ const RTOScreen = (props: Props) => {
     onRefresh,
     moreLoad,
     totalElements,
+    exportExcelSheet,
+    dateRange,
+    isDatePickerVisible,
+    setDateRange,
+    setIsDatePickerVisible,
   } = useDashboardRTOService();
 
   return (
@@ -72,6 +80,51 @@ const RTOScreen = (props: Props) => {
         )}
       </View>
 
+      <View
+        style={{
+          paddingHorizontal: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: '#ccc',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <View>
+          <TouchableOpacity
+            style={styles.dateContainer}
+            onPress={() => setIsDatePickerVisible(true)}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
+              <Text style={styles.dateText}>
+                {formatDate(dateRange.fromDate as any) || 'Select From Date'}
+              </Text>
+              <Text style={styles.dateText}>-</Text>
+              <Text style={styles.dateText}>
+                {formatDate(dateRange.toDate as any) || 'Select To Date'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <CustomDatePickerModal
+            visible={isDatePickerVisible}
+            onClose={() => setIsDatePickerVisible(false)}
+            date={dateRange}
+            onSelect={(startDate, endDate) => {
+              setDateRange({
+                fromDate: startDate ? new Date(startDate as any) : null,
+                toDate: endDate ? new Date(endDate as any) : null,
+              });
+            }}
+            title="Pick Order Date"
+          />
+        </View>
+        <TouchableOpacity onPress={exportExcelSheet}>
+          <Image
+            source={require('../../../../../assets/excelImage.png')}
+            style={{width: 60, height: 60}}
+            resizeMethod="scale"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
       {loading.rto ? (
         <ActivityIndicator size="large" style={styles.loader} />
       ) : (
@@ -129,5 +182,18 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(8),
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: moderateScale(10),
+    borderRadius: 999,
+  },
+  dateText: {
+    fontSize: moderateScale(10),
+    color: '#000',
   },
 });

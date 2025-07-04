@@ -1,5 +1,4 @@
 import {
-  Alert,
   Dimensions,
   Platform,
   StyleSheet,
@@ -23,6 +22,8 @@ const LineChartComponent = ({
   onStartDateChange: (event: any, selectedDate: Date | undefined) => void;
   onEndDateChange: (event: any, selectedDate: Date | undefined) => void;
 }) => {
+  const allValues = data.flatMap(item => item.vendorData.map(v => v.value));
+  const maxValue = Math.max(...allValues);
   const dlData = processData(data, 'DL');
   const dtData = processData(data, 'DT');
   const bdData = processData(data, 'BD');
@@ -30,6 +31,7 @@ const LineChartComponent = ({
   const {endDate, startDate} = useDasboardStore();
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Vendor Data Trends</Text>
@@ -166,13 +168,16 @@ const LineChartComponent = ({
         dataPointsColor={vendorColors.DL}
         dataPointsColor2={vendorColors.DT}
         dataPointsColor3={vendorColors.BD}
-        noOfSections={10}
+        noOfSections={maxValue}
         xAxisLabelTextStyle={{fontSize: 8, color: 'black'}}
-        initialSpacing={20}
-        width={Dimensions.get('screen').width * 0.85}
+        initialSpacing={5}
+        endSpacing={5}
+        width={Dimensions.get('screen').width * 0.8}
         color={vendorColors.DL}
         color2={vendorColors.DT}
         color3={vendorColors.BD}
+        adjustToWidth={data.length < 5}
+        maxValue={maxValue}
       />
     </View>
   );
@@ -189,7 +194,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    // alignItems: 'center',
     marginVertical: 16,
   },
   title: {

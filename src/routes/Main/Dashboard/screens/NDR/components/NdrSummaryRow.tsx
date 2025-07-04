@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import {View, Text, StyleSheet, ScrollView, Pressable} from 'react-native';
 
 type Props = {
@@ -23,18 +24,23 @@ const NdrSummaryRow = (props: Props) => {
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View style={styles.row}>
         {summaryList.map((item, index) => (
-          <Pressable
-            key={index}
-            style={[
-              styles.item,
-              {
-                backgroundColor: item.label === activeTab ? '#ccc' : '#f2f2f2',
-              },
-            ]}
-            onPress={() => onPress?.(item)}>
-            <Text style={styles.value}>{item.value}</Text>
-            <Text style={styles.label}>{item.label}</Text>
-          </Pressable>
+          <Fragment key={index}>
+            {item.value !== 0 && (
+              <Pressable
+                key={index}
+                style={[
+                  styles.item,
+                  {
+                    backgroundColor:
+                      item.label === activeTab ? '#ccc' : '#f2f2f2',
+                  },
+                ]}
+                onPress={() => onPress?.(item)}>
+                <Text style={styles.value}>{item.value}</Text>
+                <Text style={styles.label}>{item.label}</Text>
+              </Pressable>
+            )}
+          </Fragment>
         ))}
       </View>
     </ScrollView>

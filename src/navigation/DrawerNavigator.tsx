@@ -1,7 +1,7 @@
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {TabNavigator} from './tabs';
 import {DrawerStackParamList} from './types';
-import {CodScreen, SettingScreen} from '../routes';
+import {CodScreen, FaqScreen, SettingScreen, SupportScreen} from '../routes';
 import {
   BookmyOrderScreen,
   RateCalculatorScreen,
@@ -113,6 +113,52 @@ const DrawerNavigator = () => {
         })}
         component={RateCalculatorScreen}
       />
+
+      <Drawer.Screen
+        name="FaqScreen"
+        options={({route}) => ({
+          headerShown: true,
+          headerTitle: 'FAQ',
+          drawerLabel: 'FAQ',
+          drawerIcon: ({focused, size}) => (
+            <Image
+              source={require('../assets/icons/faq.png')}
+              // source={{
+              //   uri: 'https://img.icons8.com/ios-glyphs/30/settings--v1.png',
+              // }}
+              style={{
+                width: size,
+                height: size,
+                resizeMode: 'contain',
+              }}
+            />
+          ),
+        })}
+        component={FaqScreen}
+      />
+      <Drawer.Screen
+        name="SupportScreen"
+        options={({route}) => ({
+          headerShown: true,
+          headerTitle: 'Support',
+          drawerLabel: 'Support',
+          drawerIcon: ({focused, size}) => (
+            <Image
+              source={require('../assets/icons/support.png')}
+              // source={{
+              //   uri: 'https://img.icons8.com/ios-glyphs/30/settings--v1.png',
+              // }}
+              style={{
+                width: size,
+                height: size,
+                resizeMode: 'contain',
+              }}
+            />
+          ),
+        })}
+        component={SupportScreen}
+      />
+
       <Drawer.Screen
         name="Setting"
         options={({route}) => ({
@@ -121,9 +167,7 @@ const DrawerNavigator = () => {
           drawerLabel: 'Settings',
           drawerIcon: ({focused, size}) => (
             <Image
-              source={{
-                uri: 'https://img.icons8.com/ios-glyphs/30/settings--v1.png',
-              }}
+              source={require('../assets/icons/settings.png')}
               style={{
                 width: size,
                 height: size,

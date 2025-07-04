@@ -2,26 +2,66 @@ import axios, {AxiosInstance, AxiosError} from 'axios';
 import {getBearerRefreshToken} from './RequestInterceptor';
 import * as Keychain from 'react-native-keychain';
 import {BASE_URL} from './Urls';
+import {useAuthStore} from '../store';
+
 // Create a separate instance for refreshing the token
 const refreshClient = axios.create();
 
+// Shared refresh state
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+};
+
+// Attach response interceptor
 export const attachResponseInterceptor = (client: AxiosInstance) => {
   client.interceptors.response.use(
     response => response,
     async (error: AxiosError) => {
-      if (!error.response) return Promise.reject(error);
+      const originalRequest: any = error.config;
 
-      const {status, config} = error.response as any;
+      if (!error.response || !originalRequest) {
+        return Promise.reject(error);
+      }
 
-      if (status === 401 && !config?._retry) {
-        config!._retry = true; // ✅ Prevent loop
+      const {status} = error.response;
 
+      if (status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        const {logout} = useAuthStore.getState();
+
+        // Queue requests during token refresh
+        if (isRefreshing) {
+          return new Promise(resolve => {
+            subscribeTokenRefresh(token => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(client(originalRequest));
+            });
+          });
+        }
+
+        isRefreshing = true;
         const newToken = await newAccessToken();
 
-        if (!newToken) return Promise.reject(error); // Logout or redirect user
+        isRefreshing = false;
 
-        config!.headers.Authorization = `Bearer ${newToken}`;
-        return client(config!); // ✅ Retry the failed request with a new token
+        if (!newToken) {
+          await Keychain.resetGenericPassword(); // optional: clean up
+          logout();
+          return Promise.reject(error);
+        }
+
+        onRefreshed(newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return client(originalRequest);
       }
 
       return Promise.reject(error);
@@ -29,11 +69,17 @@ export const attachResponseInterceptor = (client: AxiosInstance) => {
   );
 };
 
-// Function to refresh the token using a separate Axios instance
+// Refresh access token
 const newAccessToken = async (): Promise<string | null> => {
+  const {logout} = useAuthStore.getState();
   try {
     const refreshToken = await getBearerRefreshToken();
-    if (!refreshToken) return null;
+    console.log('Refreshing with token:', refreshToken);
+
+    if (!refreshToken) {
+      console.warn('No refresh token found');
+      return null;
+    }
 
     const response = await refreshClient.post(
       `${BASE_URL}/user/auth/refresh-token`,
@@ -51,21 +97,21 @@ const newAccessToken = async (): Promise<string | null> => {
       };
 
       await Keychain.setGenericPassword(
-        `password`,
+        'password',
         JSON.stringify(credentials),
       );
-      // await setBearerAccessToken(newToken);
       return newToken;
     }
 
     return null;
-  } catch (error) {
-    // console.error('Token refresh failed:', error);
+  } catch (error: any) {
     console.error(
       'Token refresh failed:',
-      error instanceof Error ? error.message : error,
+      error?.response?.status,
+      error?.response?.data || (error instanceof Error ? error.message : error),
     );
-
+    await Keychain.resetGenericPassword();
+    logout(); // Trigger logout if refresh fails
     return null;
   }
 };

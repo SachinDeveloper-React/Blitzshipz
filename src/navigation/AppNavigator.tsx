@@ -5,6 +5,7 @@ import AuthNavigator from './AuthNavigator';
 import {
   BalanceScreen,
   BankingDetailsScreen,
+  ChangePasswordScreen,
   ChatSupportScreen,
   EditProfileScreen,
   FaqScreen,
@@ -201,6 +202,16 @@ const AppNavigator = (props: Props) => {
             name="ProductFormScreen"
             component={ProductFormScreen}
             options={() => ({
+              headerShown: true,
+              headerBackButtonDisplayMode: 'minimal',
+              headerBackButtonMenuEnabled: true,
+            })}
+          />
+          <RootStack.Screen
+            name="ChangePasswordScreen"
+            component={ChangePasswordScreen}
+            options={() => ({
+              headerTitle: 'Change Password',
               headerShown: true,
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,

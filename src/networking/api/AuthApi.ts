@@ -7,6 +7,7 @@ const AuthApi = {
     try {
       const response = await ApiClient.post(URLS.AUTH.LOGIN, body);
 
+      console.log('response', response);
       return responseHandler(response);
     } catch (error) {
       console.log('Authapi Login error', error);

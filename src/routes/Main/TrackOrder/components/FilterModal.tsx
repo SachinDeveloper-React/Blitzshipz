@@ -336,7 +336,27 @@ const FilterModal = ({
                       toDate: endDate ? new Date(endDate as any) : null,
                     });
                   }}
-                  styles={defaultStyles}
+                  styles={{
+                    selected: {
+                      backgroundColor: '#184ea3',
+                      borderRadius: 8,
+                    },
+                    selected_label: {
+                      color: '#fff',
+                    },
+                    button_prev: {
+                      color: '#000',
+                      backgroundColor: 'blue',
+                      tintColor: '#000',
+                      borderRadius: 4,
+                    },
+                    button_next: {
+                      color: '#000',
+                      backgroundColor: 'blue',
+                      tintColor: '#000',
+                      borderRadius: 4,
+                    },
+                  }}
                   maxDate={today}
                   minDate={fiftyYearsAgo}
                 />

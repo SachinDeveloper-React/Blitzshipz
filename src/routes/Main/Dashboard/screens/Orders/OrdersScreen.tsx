@@ -5,12 +5,20 @@ import {
   ActivityIndicator,
   Pressable,
   Alert,
+  TextInput,
+  Image,
+  Text,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDashboardService} from '../../../../../services';
 import {OrderList} from './components';
-import {CustomText} from '../../../../../components';
+import {CustomDatePickerModal, CustomText} from '../../../../../components';
 import {useDashboardFilterStore} from '../../../../../store';
+import {Search, X} from 'lucide-react-native';
+import {exportExcel, formatDate, showToast} from '../../../../../utils';
+import {DateType} from 'react-native-ui-datepicker';
+import {fetchFilterData} from '../../../../../networking';
+import {moderateScale} from 'react-native-size-matters';
 
 type Props = {};
 
@@ -25,6 +33,17 @@ const OrdersScreen = (props: Props) => {
 
   const [refresh, setRefresh] = useState(false);
   const [moreload, setMoreload] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    toDate: DateType | null;
+    fromDate: DateType | null;
+  }>({
+    toDate: null,
+    fromDate: null,
+  });
+
+  const [searchText, setSearchText] = useState('');
 
   const onRefresh = async () => {
     setRefresh(true);
@@ -57,47 +76,55 @@ const OrdersScreen = (props: Props) => {
     setMoreload(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
+  const exportExcelSheet = async () => {
+    try {
       const body = {
-        waybill:
-          selectedTab === 'Manifested'
-            ? ''
-            : selectedTab === 'In Transit'
-            ? ''
-            : selectedTab === 'Dispatched'
-            ? ''
-            : selectedTab === 'Delivered'
-            ? ''
-            : '',
+        day: 0,
+        fromDate: formatDate(dateRange.fromDate) ?? '',
+        orderId: '',
+        paymentMode: '',
+        phoneNumber: '',
+        productCategory: '',
+        referenceNumber: '',
+        status: null,
+        toDate: formatDate(dateRange.toDate) ?? '',
+        waybill: '',
+      };
+
+      const excelData = await fetchFilterData(body);
+
+      if (excelData.data.content.length <= 0) {
+        showToast('No Data Found');
+        return;
+      }
+
+      await exportExcel(excelData.data.content || [], 'rto');
+    } catch (error) {
+      console.log('Error on excel ->', error);
+    }
+  };
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(async () => {
+      setLoading(true);
+      const isOrderId = searchText.startsWith('AT');
+      const body = {
+        waybill: isOrderId ? '' : searchText,
         status: selectedTab,
         rtoMarked:
-          selectedTab === 'Manifested'
-            ? null
-            : selectedTab === 'In Transit'
+          selectedTab === 'In Transit' || selectedTab === 'Dispatched'
             ? false
-            : selectedTab === 'Dispatched'
-            ? false
-            : selectedTab === 'Delivered'
-            ? null
             : null,
-        orderLive:
-          selectedTab === 'Manifested'
-            ? true
-            : selectedTab === 'In Transit'
-            ? true
-            : selectedTab === 'Dispatched'
-            ? true
-            : selectedTab === 'Delivered'
-            ? true
-            : null,
+        orderLive: true,
+
+        orderId: isOrderId ? searchText : '',
       };
 
       await orderFilterUser(body as any, 0);
       setLoading(false);
-    })();
-  }, [selectedTab]);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [searchText, selectedTab]);
 
   const toggleDropdown = () => setShowStatusDropdown(prev => !prev);
 
@@ -105,6 +132,81 @@ const OrdersScreen = (props: Props) => {
     <Pressable
       style={styles.container}
       onPress={() => setShowStatusDropdown(false)}>
+      <View
+        style={{
+          paddingLeft: 16,
+          paddingRight: searchActive ? 16 : 0,
+          borderBottomWidth: 1,
+          borderBottomColor: '#ccc',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        {!searchActive ? (
+          <>
+            <View>
+              <TouchableOpacity
+                style={styles.dateContainer}
+                onPress={() => setIsDatePickerVisible(true)}>
+                <View
+                  style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
+                  <Text style={styles.dateText}>
+                    {formatDate(dateRange.fromDate as any) ||
+                      'Select From Date'}
+                  </Text>
+                  <Text style={styles.dateText}>-</Text>
+                  <Text style={styles.dateText}>
+                    {formatDate(dateRange.toDate as any) || 'Select To Date'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <CustomDatePickerModal
+                visible={isDatePickerVisible}
+                onClose={() => setIsDatePickerVisible(false)}
+                date={dateRange}
+                onSelect={(startDate, endDate) => {
+                  setDateRange({
+                    fromDate: startDate ? new Date(startDate as any) : null,
+                    toDate: endDate ? new Date(endDate as any) : null,
+                  });
+                }}
+                title="Pick Order Date"
+              />
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Search onPress={() => setSearchActive(!searchActive)} />
+              <TouchableOpacity onPress={exportExcelSheet}>
+                <Image
+                  source={require('../../../../../assets/excelImage.png')}
+                  style={{width: 60, height: 60}}
+                  resizeMethod="scale"
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <>
+            <TextInput
+              placeholder="Search by Order ID or Waybill"
+              style={{height: 58}}
+              placeholderTextColor={'#ccc'}
+              autoFocus={true}
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+            <X
+              onPress={() => {
+                setSearchActive(!searchActive);
+                setTimeout(() => {
+                  setSearchText('');
+                }, 100);
+              }}
+            />
+          </>
+        )}
+      </View>
+
       <View style={styles.header}>
         <CustomText style={styles.title}>
           {selectedTab === 'Manifested' ? 'Pickups' : selectedTab}{' '}
@@ -214,5 +316,18 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(8),
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: moderateScale(10),
+    borderRadius: 999,
+  },
+  dateText: {
+    fontSize: moderateScale(10),
+    color: '#000',
   },
 });

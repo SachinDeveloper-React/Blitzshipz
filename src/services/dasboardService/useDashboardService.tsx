@@ -25,6 +25,8 @@ const useDashboardService = () => {
     setStartDate,
     revenueData,
     setRevenueData,
+    setPickupData,
+    pickupData,
   } = useDasboardStore();
   const {balance, updateBalance} = useFundStore();
   const [loading, setLoading] = useState({
@@ -228,53 +230,54 @@ const useDashboardService = () => {
     const formattedStateDate = startDate.toISOString().split('T')[0];
     const formattedEndDate = endDate.toISOString().split('T')[0];
     try {
-      const [overview, graph, revenue, balance] = await Promise.all([
+      const [overview, graph, revenue, pickup, balance] = await Promise.all([
         DashboardApi.overviewOrder(),
         DashboardApi.orderDataGraph(formattedStateDate, formattedEndDate),
         DashboardApi.orderDataRevenue(formattedStateDate, formattedEndDate),
+        DashboardApi.pickedUpDetails(),
         FundApi.getBalance(),
       ]);
 
       const overviewResponseData = [
         {
           title: 'Total Orders',
-          count: overview.data.data.totalOrder,
+          count: overview.data.data.totalOrder || '--',
           icon: 'truck',
           color: '#6B7FD7',
         },
         {
           title: 'Live Orders',
-          count: overview.data.data.inTransitOrder,
+          count: overview.data.data.inTransitOrder || '--',
           icon: 'truck',
           color: '#F4C03E',
         },
         {
           title: 'Pickup Scheduled',
-          count: overview.data.data.pickupScheduleOrder,
+          count: overview.data.data.pickupScheduleOrder || '--',
           icon: 'truck',
           color: '#7C4DFF',
         },
         {
           title: 'Fulfilled Orders',
-          count: overview.data.data.deliveredOrder,
+          count: overview.data.data.deliveredOrder || '--',
           icon: 'truck',
           color: '#4CAF50',
         },
         {
           title: 'Non Delivered',
-          count: overview.data.data.nonDeliveredOrder || '--', // Fix it
+          count: overview.data.data.pendingNdrOrder || '--',
           icon: 'truck',
           color: '#9E9E9E',
         },
         {
           title: 'Cancelled Orders',
-          count: overview.data.data.canceledOrder,
+          count: overview.data.data.canceledOrder || '--',
           icon: 'truck',
           color: '#1E88E5',
         },
         {
           title: 'Return Orders',
-          count: overview.data.data.returnOrder,
+          count: overview.data.data.returnOrder || '--',
           icon: 'truck',
           color: '#FF7043',
         },
@@ -321,6 +324,7 @@ const useDashboardService = () => {
       setOverviewData(overviewResponseData);
       setPaiChartData(paiData);
       setGraphData(graph.data.data);
+      setPickupData(pickup.data.data);
       if (balance.code === 200 && !balance.error) {
         updateBalance(balance.data ?? 0);
       }
@@ -343,6 +347,7 @@ const useDashboardService = () => {
     graphData,
     overviewData,
     revenueData,
+    pickupData,
     setGraphData,
     setOverviewData,
     endDate,

@@ -27,9 +27,9 @@ export type SignupState = {
 const useAuthService = () => {
   const {login, logout} = useAuthStore();
   const [state, setState] = useState<AuthState>({
-    email: '',
+    email: 'duashivam.a@gmail.com',
     isValidEmail: false,
-    password: '',
+    password: 'Blitzship@123',
     isValidPassword: false,
   });
   const [loginErrorState, setLoginErrorState] = useState<AuthState>({

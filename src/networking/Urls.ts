@@ -29,11 +29,13 @@ export const URLS = {
   PROFILE: {
     PROFILEDETAILS: '/user/general/details',
     VIEWWAREHOUSES: '/orders/warehouse/view-warehouses',
+    VIEWPROFILEDOCS: '/user/verification/view-doc?documentName=logo',
     GETBANKDETAILS: '/user/banking/get-banking-details',
     GETMYPRODUCT: '/orders/product/get-all-products',
     EDIT: '/user/general/edit-user-details',
     EDITBANKDETAILS: '/user/banking/add-banking-details',
     GETDOCUMENTS: '/user/verification/view-docs',
+    UPDATEPASSWORD: '/user/general/password-update',
   },
   COD: {
     CODSUMMARY: '/orders/cod/get-cod-summary',

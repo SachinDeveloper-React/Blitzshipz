@@ -21,30 +21,16 @@ type SettingItem = {
 const SettingScreen = () => {
   const {logout} = useAuthService();
   const list: SettingItem[] = [
-    // {
-    //   id: 1,
-    //   name: 'Invoice',
-    //   img: require('../../assets/icons/invoice.png'),
-    //   navigate: 'InvoiceScreen',
-    // },
     {
-      id: 2,
-      name: 'FAQ',
-      img: require('../../assets/icons/faq.png'),
-      navigate: 'FaqScreen',
-    },
-    {
-      id: 3,
-      name: 'Support',
-      img: require('../../assets/icons/support.png'),
-      navigate: 'SupportScreen',
+      id: 1,
+      name: 'Change Password',
+      img: require('../../assets/icons/userInfo.png'),
+      navigate: 'ChangePasswordScreen',
     },
   ];
 
   const SCREENS = {
-    FaqScreen: 'FaqScreen',
-    InvoiceScreen: 'InvoiceScreen',
-    SupportScreen: 'SupportScreen',
+    ChangePasswordScreen: 'ChangePasswordScreen',
   } as const;
 
   type ScreenName = keyof typeof SCREENS;

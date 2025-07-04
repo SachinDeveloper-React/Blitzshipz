@@ -27,16 +27,39 @@ type User = {
   emailVerified: boolean;
 };
 
+type UserProfileDoc = {
+  documentDetails: string;
+  documentName: string;
+  documentNumber: string;
+  id: string;
+  image: {
+    fileName: string;
+    data: {
+      data: string;
+      type: number;
+    };
+  }[];
+  status: string;
+  userId: string;
+  verify: boolean;
+};
+
 type useProfileDataState = {
   userProfileData: User | null;
+  userProfileDoc: UserProfileDoc | null;
   setUserProfileData: (data: User) => void;
+  setUserProfileDocData: (data: UserProfileDoc) => void;
   updateUserProfileData: (data: User) => void;
+  updateUserProfileDocData: (data: UserProfileDoc) => void;
 };
 
 export const useProfileDataStore = create<useProfileDataState>(set => ({
   userProfileData: null,
+  userProfileDoc: null,
   setUserProfileData: data => set({userProfileData: data}),
+  setUserProfileDocData: data => set({userProfileDoc: data}),
   updateUserProfileData: data => set({userProfileData: data}),
+  updateUserProfileDocData: data => set({userProfileDoc: data}),
 }));
 
 type Address = {

@@ -34,4 +34,5 @@ export {
   InvoiceScreen,
   SupportScreen,
   ChatSupportScreen,
+  ChangePasswordScreen,
 } from './Settings';

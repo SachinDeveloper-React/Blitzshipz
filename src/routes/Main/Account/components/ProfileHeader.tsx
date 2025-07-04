@@ -1,23 +1,47 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   name: string;
+  profile: string;
   verified: boolean;
+  loading: boolean;
+  onPress?: () => void;
 };
 
-const ProfileHeader = ({name, verified}: Props) => {
+const ProfileHeader = ({name, verified, profile, onPress, loading}: Props) => {
   return (
     <View style={styles.container}>
-      <View style={styles.avatar}>
-        <Image
-          source={{
-            uri: 'https://www.app.Blitzships.com/images/dummy-dp.jpg',
-          }}
-          style={styles.avatar}
-        />
-      </View>
+      <TouchableOpacity style={styles.avatar} onPress={onPress}>
+        {loading ? (
+          <View
+            style={[
+              styles.avatar,
+              {
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
+            ]}>
+            <ActivityIndicator size={'small'} />
+          </View>
+        ) : (
+          <Image
+            source={{
+              uri: profile,
+            }}
+            style={styles.avatar}
+            resizeMode="contain"
+          />
+        )}
+      </TouchableOpacity>
       <View style={styles.nameContainer}>
         <View style={styles.nameRow}>
           <Text style={styles.name}>{name}</Text>

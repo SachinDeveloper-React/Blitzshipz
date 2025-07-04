@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
+  Image,
 } from 'react-native';
 import {
   AddressCardList,
@@ -19,6 +20,7 @@ import {BottomTabParamList, navigate} from '../../../navigation';
 import {CustomIcons, CustomText, HamburgerIcon} from '../../../components';
 import {useProfileService} from '../../../services';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {openGalleryImage} from '../../../utils';
 
 type ProfileScreenProps = BottomTabScreenProps<BottomTabParamList, 'Profile'>;
 const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
@@ -29,6 +31,8 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
     error,
     onRefresh,
     deleteWarehouse,
+    userProfileDoc,
+    uploadProfileImage,
   } = useProfileService({initial: true});
 
   useLayoutEffect(() => {
@@ -77,6 +81,16 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
     );
   };
 
+  const handleImage = async () => {
+    const result = await openGalleryImage();
+    if (result) {
+      console.log('result', result);
+      const uri = result.uri;
+      if (uri) {
+        uploadProfileImage(result);
+      }
+    }
+  };
   if (error.userProfileError || error.userWarehouses) {
     return (
       <CustomText>{error.userProfileError || error.userWarehouses}</CustomText>
@@ -118,6 +132,12 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
         <ProfileHeader
           name={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
           verified={Boolean(userProfileData?.verified)}
+          profile={
+            `data:image/png;base64,${userProfileDoc?.image[0].data.data}` ||
+            'https://www.app.Blitzships.com/images/dummy-dp.jpg'
+          }
+          onPress={handleImage}
+          loading={loading.profileImage}
         />
         <ProfileInfoCard label="User ID" value={userProfileData?.userId} />
         <ProfileInfoCard label="Email" value={userProfileData?.email} />

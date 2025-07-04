@@ -4,7 +4,6 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import React from 'react';
@@ -13,11 +12,10 @@ import {
   LineChartComponent,
   OverviewOrder,
   RevenueList,
+  TodayPickupList,
 } from './components';
-import {orderData} from './helper';
 import {useDashboardService} from '../../../../../services';
-
-type Props = {};
+import {CustomText} from '../../../../../components';
 
 const OverviewScreen = () => {
   const {
@@ -33,6 +31,7 @@ const OverviewScreen = () => {
     onDashboardRefresh,
     dashBoardLoading,
     paiChartData,
+    pickupData,
   } = useDashboardService();
 
   if (dashBoardLoading.loading) {
@@ -71,6 +70,17 @@ const OverviewScreen = () => {
         />
         <DonutChart data={paiChartData} />
 
+        <View
+          style={[
+            styles.cardStyle,
+            {
+              marginTop: 10,
+            },
+          ]}>
+          <CustomText style={styles.cardHeader}>Today's Pickups</CustomText>
+          <TodayPickupList data={(pickupData as any) || []} />
+        </View>
+
         <LineChartComponent
           data={graphData || []}
           onStartDateChange={function (
@@ -100,7 +110,18 @@ const OverviewScreen = () => {
             }
           }}
         />
-        <RevenueList data={revenueData as any} />
+        <View
+          style={[
+            styles.cardStyle,
+            {
+              marginBottom: 10,
+            },
+          ]}>
+          <CustomText style={styles.cardHeader}>
+            Latest 7 days revenue
+          </CustomText>
+          <RevenueList data={revenueData as any} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -117,5 +138,21 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: 'space-between',
+  },
+  cardStyle: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  cardHeader: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
   },
 });

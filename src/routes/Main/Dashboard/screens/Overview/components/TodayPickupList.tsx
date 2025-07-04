@@ -1,41 +1,31 @@
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {View, Text, FlatList, StyleSheet, SafeAreaView} from 'react-native';
+import {VendorIcons} from '../../../../../../components';
 
-type RevenueData = {
-  count: number;
-  date: string;
-  revenue: number;
-}[];
-
-const formatDate = (isoDate: string) => {
-  const date = new Date(isoDate);
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
-  return date.toLocaleDateString('en-US', options);
+type Props = {
+  data: {
+    totalOrders: number;
+    vendorOrders: number;
+    vendorCode: string;
+  }[];
 };
 
-const ListItem = ({
-  item,
-}: {
-  item: {date: string; count: number; revenue: number};
-}) => {
-  return (
-    <View style={styles.card}>
-      <View style={styles.row}>
-        <Text style={styles.dateText}>📅 {formatDate(item.date)}</Text>
-        <Text style={styles.countText}>🛒 Orders: {item.count}</Text>
+const TodayPickupList = ({data}: Props) => {
+  const ListItem = ({
+    item,
+  }: {
+    item: {totalOrders: number; vendorOrders: number; vendorCode: string};
+  }) => {
+    return (
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <VendorIcons vendorCode={item.vendorCode} />
+          <Text style={styles.revenueText}>{item.vendorOrders}</Text>
+        </View>
       </View>
-      <Text style={styles.revenueText}>
-        💰 Revenue: ₹{item.revenue.toLocaleString()}
-      </Text>
-    </View>
-  );
-};
+    );
+  };
 
-const RevenueList = ({data}: {data: RevenueData}) => {
   return (
     <FlatList
       data={data}
@@ -52,13 +42,13 @@ const RevenueList = ({data}: {data: RevenueData}) => {
   );
 };
 
-export default RevenueList;
+export default TodayPickupList;
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
+    paddingHorizontal: 16,
     marginVertical: 2,
     marginHorizontal: 2,
     shadowColor: '#000',
@@ -70,7 +60,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    alignItems: 'center',
   },
   dateText: {
     fontSize: 16,

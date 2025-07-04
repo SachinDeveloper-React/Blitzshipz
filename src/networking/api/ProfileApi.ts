@@ -5,6 +5,43 @@ import {URLS} from '../Urls';
 import {Platform} from 'react-native';
 
 const ProfileApi = {
+  updateProfile: async (body: {documents?: Asset | undefined; id: string}) => {
+    try {
+      console.log('body', body);
+      if (
+        !body.documents?.uri ||
+        !body.documents?.type ||
+        !body.documents?.fileName
+      ) {
+        throw new Error('Invalid image');
+      }
+
+      const formData = new FormData();
+      formData.append('documents', {
+        uri:
+          Platform.OS === 'ios'
+            ? body.documents.uri.replace('file://', '')
+            : body.documents.uri,
+        type: body.documents.type,
+        name: body.documents.fileName,
+      } as any);
+
+      const response = await ApiClient.postForm(
+        `${URLS.DOCUMENT.UPLOAD}?documentName=logo&documentNumber=&documentDetails=&userId=${body.id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('DEBUG: getProfileDetails => error', error);
+      return errorHandler(error);
+    }
+  },
+
   getProfileDetails: async () => {
     try {
       const response = await ApiClient.get(URLS.PROFILE.PROFILEDETAILS);
@@ -19,6 +56,15 @@ const ProfileApi = {
       const response = await ApiClient.get(
         `${URLS.PROFILE.VIEWWAREHOUSES}?userId=${id}`,
       );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('DEBUG: getProfileWarehouses => error', error);
+      return errorHandler(error);
+    }
+  },
+  getProfileDocs: async () => {
+    try {
+      const response = await ApiClient.get(`${URLS.PROFILE.VIEWPROFILEDOCS}`);
       return responseHandler(response);
     } catch (error) {
       console.log('DEBUG: getProfileWarehouses => error', error);
@@ -200,6 +246,22 @@ const ProfileApi = {
       return responseHandler(response);
     } catch (error) {
       console.log('DEBUG: getDocuments => error', error);
+      return errorHandler(error);
+    }
+  },
+
+  upadtePassword: async (
+    oldPassword: string,
+    newPassword: string,
+    id: string,
+  ) => {
+    try {
+      const response = await ApiClient.put(
+        `${URLS.PROFILE.UPDATEPASSWORD}?oldPassword=${oldPassword}&newPassword=${newPassword}&id=${id}`,
+      );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('DEBUG: upadtePassword => error', error);
       return errorHandler(error);
     }
   },

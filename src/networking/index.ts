@@ -16,3 +16,5 @@ export {
   DocumentApi,
   RateCalculatorApi,
 } from './api';
+
+export {fetchFilterData} from './service';

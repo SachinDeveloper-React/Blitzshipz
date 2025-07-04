@@ -20,6 +20,8 @@ export type DrawerStackParamList = {
   RateCalculatorScreen: undefined;
   Setting: undefined;
   BookmyOrderScreen: undefined;
+  FaqScreen: undefined;
+  SupportScreen: undefined;
 };
 
 export type BottomTabParamList = {
@@ -121,4 +123,5 @@ export type RootStackParamList = {
     type: 'add' | 'edit';
     defaultData?: MyProduct;
   };
+  ChangePasswordScreen: undefined;
 };
