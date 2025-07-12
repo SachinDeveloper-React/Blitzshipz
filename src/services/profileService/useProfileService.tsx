@@ -57,7 +57,13 @@ const useProfileService = (props: Props) => {
     try {
       if (!user) return;
       const response = await ProfileApi.getProfileDocs();
-      setUserProfileDocData(response.data);
+      console.log('response', response);
+
+      if (response.code === 200) {
+        setUserProfileDocData(response.data);
+      } else {
+        setUserProfileDocData(null);
+      }
     } catch (error: any) {
       console.log(error);
       setError(prev => ({...prev, userProfileError: error.message}));

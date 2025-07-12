@@ -1,13 +1,6 @@
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {FlatList, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import React, {useEffect} from 'react';
-import {useCreateOrderService} from '../../../../../services';
+import {useBookmyOrderAndRateService} from '../../../../../services';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParamList} from '../../../../../navigation';
 import PricingCard from './components/PricingCard';
@@ -19,7 +12,7 @@ const RateScreen = ({
   route,
 }: StackScreenProps<RootStackParamList, 'RateScreen'>) => {
   const {id} = route.params;
-  const {fetchRates, ratesData} = useCreateOrderService();
+  const {fetchRates, ratesData} = useBookmyOrderAndRateService();
 
   useEffect(() => {
     fetchRates(id);

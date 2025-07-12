@@ -6,13 +6,12 @@ import {
   Pressable,
   useWindowDimensions,
   SafeAreaView,
-  StatusBar,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../navigation';
 import {useFundService} from '../../../services';
-import {CustomHeader, CustomIcons} from '../../../components';
+import {CustomIcons} from '../../../components';
 import {
   DeductionsScreen,
   RechargesScreen,
@@ -146,7 +145,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     gap: 10,
-    marginRight: 15,
   },
   walletIcon: {
     marginRight: 6,

@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: Dimensions.get('screen').width,
+    width: '100%',
     height: Dimensions.get('screen').height * 0.5,
   },
   lottie: {

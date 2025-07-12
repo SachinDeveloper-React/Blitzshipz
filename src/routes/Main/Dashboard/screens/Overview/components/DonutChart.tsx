@@ -13,10 +13,21 @@ interface DonutChartProps {
 }
 
 const DonutChart: React.FC<DonutChartProps> = ({data}) => {
-  const pieData = data.map(item => ({
+  let pieData = data.map(item => ({
     value: item.value,
     color: item.color,
   }));
+
+  const isEmpty = pieData.every(item => item.value === 0);
+
+  if (isEmpty) {
+    pieData = [
+      {
+        value: 1,
+        color: '#e0e0e0',
+      },
+    ];
+  }
 
   return (
     <View style={styles.container}>

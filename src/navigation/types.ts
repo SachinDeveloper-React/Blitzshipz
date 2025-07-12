@@ -28,7 +28,7 @@ export type BottomTabParamList = {
   Dashboard: undefined;
   TrackOrderScreen: undefined;
   Profile: undefined;
-  Upload: undefined;
+  CreateOrderScreen: undefined;
 };
 
 export type RootStackParamList = {
@@ -124,4 +124,7 @@ export type RootStackParamList = {
     defaultData?: MyProduct;
   };
   ChangePasswordScreen: undefined;
+  DropingDetailsScreen: undefined;
+  ProductDetailsScreen: undefined;
+  SellerScreen: undefined;
 };

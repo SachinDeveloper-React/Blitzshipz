@@ -7,14 +7,14 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import OrderCard from './components/OrderCards';
-import {useCreateOrderService} from '../../../../services';
+import {OrderCards} from './components';
+import {useBookmyOrderAndRateService} from '../../../../services';
 import {navigate} from '../../../../navigation';
 import {NotFound} from '../../../../layout';
 
 const BookmyOrderScreen = () => {
   const {handleLoadMore, orders, loading, onRefresh, fetchOrders} =
-    useCreateOrderService();
+    useBookmyOrderAndRateService();
   const handleEdit = (id: string) => {
     console.log('Edit order', id);
   };
@@ -60,7 +60,7 @@ const BookmyOrderScreen = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         renderItem={({item}) => (
-          <OrderCard
+          <OrderCards
             item={item}
             onEdit={handleEdit}
             onPay={handlePay}

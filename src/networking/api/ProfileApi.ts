@@ -7,7 +7,6 @@ import {Platform} from 'react-native';
 const ProfileApi = {
   updateProfile: async (body: {documents?: Asset | undefined; id: string}) => {
     try {
-      console.log('body', body);
       if (
         !body.documents?.uri ||
         !body.documents?.type ||

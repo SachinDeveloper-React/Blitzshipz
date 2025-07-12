@@ -135,6 +135,7 @@ const ProductFormScreen = ({
                 placeholder="Enter product name"
                 value={form.productName}
                 onChangeText={text => handleChange('productName', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 
@@ -186,6 +187,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.price}
                 onChangeText={text => handleChange('price', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 
@@ -197,6 +199,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.tax}
                 onChangeText={text => handleChange('tax', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 
@@ -212,6 +215,7 @@ const ProductFormScreen = ({
                 placeholder="Enter product code"
                 value={form.productCode}
                 onChangeText={text => handleChange('productCode', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 
@@ -223,6 +227,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.actualWeight}
                 onChangeText={text => handleChange('actualWeight', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 
@@ -234,6 +239,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.length}
                 onChangeText={text => handleChange('length', text)}
+                placeholderTextColor="#ccc"
               />
               <Text style={styles.multiply}>×</Text>
               <TextInput
@@ -242,6 +248,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.breadth}
                 onChangeText={text => handleChange('breadth', text)}
+                placeholderTextColor="#ccc"
               />
               <Text style={styles.multiply}>×</Text>
               <TextInput
@@ -250,6 +257,7 @@ const ProductFormScreen = ({
                 keyboardType="numeric"
                 value={form.height}
                 onChangeText={text => handleChange('height', text)}
+                placeholderTextColor="#ccc"
               />
             </View>
 

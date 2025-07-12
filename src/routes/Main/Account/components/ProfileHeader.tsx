@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   name: string;
-  profile: string;
+  profile: any;
   verified: boolean;
   loading: boolean;
   onPress?: () => void;
@@ -33,13 +33,7 @@ const ProfileHeader = ({name, verified, profile, onPress, loading}: Props) => {
             <ActivityIndicator size={'small'} />
           </View>
         ) : (
-          <Image
-            source={{
-              uri: profile,
-            }}
-            style={styles.avatar}
-            resizeMode="contain"
-          />
+          <Image source={profile} style={styles.avatar} resizeMode="contain" />
         )}
       </TouchableOpacity>
       <View style={styles.nameContainer}>

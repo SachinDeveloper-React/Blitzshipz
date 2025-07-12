@@ -6,8 +6,22 @@ const AuthApi = {
   login: async (body: {email: string; password: string}) => {
     try {
       const response = await ApiClient.post(URLS.AUTH.LOGIN, body);
-
-      console.log('response', response);
+      return responseHandler(response);
+    } catch (error) {
+      console.log('Authapi Login error', error);
+      return errorHandler(error);
+    }
+  },
+  register: async (body: {
+    email: string;
+    mobileNumber: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  }) => {
+    try {
+      const response = await ApiClient.post(URLS.AUTH.SIGNUP, body);
       return responseHandler(response);
     } catch (error) {
       console.log('Authapi Login error', error);

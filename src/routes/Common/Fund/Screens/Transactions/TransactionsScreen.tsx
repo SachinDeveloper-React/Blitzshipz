@@ -9,6 +9,7 @@ import {
 import React, {useLayoutEffect} from 'react';
 import {useFundService} from '../../../../../services';
 import {TransactionCard} from '../../components';
+import {NotFound} from '../../../../../layout';
 
 type Props = {};
 
@@ -49,6 +50,7 @@ const TransactionsScreen = (props: Props) => {
         removeClippedSubviews
         renderToHardwareTextureAndroid
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => <NotFound title="No Transactions Found" />}
       />
     </View>
   );

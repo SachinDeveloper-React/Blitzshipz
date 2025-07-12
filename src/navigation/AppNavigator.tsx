@@ -7,17 +7,20 @@ import {
   BankingDetailsScreen,
   ChangePasswordScreen,
   ChatSupportScreen,
+  DropingDetailsScreen,
   EditProfileScreen,
   FaqScreen,
   InvoiceScreen,
   MyDocumentsScreen,
   MyProductScreen,
   OrderDetailsScreen,
+  ProductDetailsScreen,
   ProductFormScreen,
   ProductTrackingScreen,
   ProfileOtherDetailsScreen,
   RateScreen,
   RemittanceScreen,
+  SellerScreen,
   ShipmentTrackingScreen,
   SupportScreen,
   WarehouseScreen,
@@ -37,14 +40,17 @@ const AppNavigator = (props: Props) => {
         animation: 'slide_from_right',
       }}>
       {!isAuthenticated ? (
-        <RootStack.Screen name="Auth" component={AuthNavigator} />
-      ) : (
-        <RootStack.Group>
-          <RootStack.Screen name="Drawer" component={DrawerNavigator} />
+        <>
+          <RootStack.Screen name="Auth" component={AuthNavigator} />
           <RootStack.Screen
             name="ShipmentTracking"
             component={ShipmentTrackingScreen}
           />
+        </>
+      ) : (
+        <RootStack.Group>
+          <RootStack.Screen name="Drawer" component={DrawerNavigator} />
+
           <RootStack.Screen
             name="ProductTracking"
             component={ProductTrackingScreen}
@@ -212,6 +218,36 @@ const AppNavigator = (props: Props) => {
             component={ChangePasswordScreen}
             options={() => ({
               headerTitle: 'Change Password',
+              headerShown: true,
+              headerBackButtonDisplayMode: 'minimal',
+              headerBackButtonMenuEnabled: true,
+            })}
+          />
+          <RootStack.Screen
+            name="DropingDetailsScreen"
+            component={DropingDetailsScreen}
+            options={() => ({
+              headerTitle: 'Droping Details',
+              headerShown: true,
+              headerBackButtonDisplayMode: 'minimal',
+              headerBackButtonMenuEnabled: true,
+            })}
+          />
+          <RootStack.Screen
+            name="ProductDetailsScreen"
+            component={ProductDetailsScreen}
+            options={() => ({
+              headerTitle: 'Product Details',
+              headerShown: true,
+              headerBackButtonDisplayMode: 'minimal',
+              headerBackButtonMenuEnabled: true,
+            })}
+          />
+          <RootStack.Screen
+            name="SellerScreen"
+            component={SellerScreen}
+            options={() => ({
+              headerTitle: 'Create Seller',
               headerShown: true,
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,

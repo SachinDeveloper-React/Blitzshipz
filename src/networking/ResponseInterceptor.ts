@@ -74,7 +74,6 @@ const newAccessToken = async (): Promise<string | null> => {
   const {logout} = useAuthStore.getState();
   try {
     const refreshToken = await getBearerRefreshToken();
-    console.log('Refreshing with token:', refreshToken);
 
     if (!refreshToken) {
       console.warn('No refresh token found');

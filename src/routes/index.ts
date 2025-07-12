@@ -11,10 +11,10 @@ export {
   BalanceScreen,
   WarehouseScreen,
   BookmyOrderScreen,
-  CreateOrderScreen,
   RateScreen,
   OrderDetailsScreen,
   MyDocumentsScreen,
+  SellerScreen,
 } from './Common';
 export {
   DashboardScreen,
@@ -27,6 +27,9 @@ export {
   ProfileInfoCard,
   UserRoleBadge,
   ProductFormScreen,
+  CreateOrderScreen,
+  DropingDetailsScreen,
+  ProductDetailsScreen,
 } from './Main';
 export {
   SettingScreen,

@@ -1,5 +1,7 @@
 import React from 'react';
 import {View, Text, FlatList, StyleSheet, SafeAreaView} from 'react-native';
+import {NotFound} from '../../../../../../layout';
+import {CustomText} from '../../../../../../components';
 
 type RevenueData = {
   count: number;
@@ -42,12 +44,18 @@ const RevenueList = ({data}: {data: RevenueData}) => {
       scrollEnabled={false}
       keyExtractor={(_, index) => index.toString()}
       renderItem={({item}) => <ListItem item={item} />}
-      contentContainerStyle={{paddingBottom: 20}}
       ItemSeparatorComponent={() => <View style={{height: 10}} />}
       initialNumToRender={10}
       updateCellsBatchingPeriod={10}
       removeClippedSubviews={true}
       maxToRenderPerBatch={10}
+      ListEmptyComponent={() => (
+        <CustomText
+          variant="subtitle"
+          style={{textAlign: 'center', padding: 20}}>
+          No Data Found
+        </CustomText>
+      )}
     />
   );
 };

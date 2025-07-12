@@ -18,7 +18,10 @@ export {useCodService} from './codService';
 export {useDiscrepancyService} from './weightDiscrepancyService';
 export {useFundService} from './fundService';
 export {useWarehouseService} from './warehouse';
-export {useCreateOrderService} from './createOrderService';
+export {
+  useBookmyOrderAndRateService,
+  useCreateOrderService,
+} from './createOrderService';
 export {useChatSupportService} from './chatService';
 export {useRateService} from './rateService';
 export {default as ImagePickerService} from './ImagePickerService';

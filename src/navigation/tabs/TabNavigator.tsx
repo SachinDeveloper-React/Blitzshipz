@@ -3,7 +3,12 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from '../types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {DashboardScreen, ProfileScreen, TrackOrderScreen} from '../../routes';
+import {
+  CreateOrderScreen,
+  DashboardScreen,
+  ProfileScreen,
+  TrackOrderScreen,
+} from '../../routes';
 import {HamburgerIcon} from '../../components';
 import {DrawerActions} from '@react-navigation/native';
 type Props = {};
@@ -20,7 +25,8 @@ const TabNavigator = (props: Props) => {
           let iconName: string = 'Dashboard';
           if (route.name === 'Dashboard') iconName = 'home';
           if (route.name === 'TrackOrderScreen') iconName = 'search';
-          if (route.name === 'Upload') iconName = 'cloud-upload-outline';
+          if (route.name === 'CreateOrderScreen')
+            iconName = 'cloud-upload-outline';
           if (route.name === 'Profile') iconName = 'person';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -83,6 +89,34 @@ const TabNavigator = (props: Props) => {
           },
         })}
         component={TrackOrderScreen}
+      />
+      <Tab.Screen
+        name="CreateOrderScreen"
+        options={({navigation, route}) => ({
+          tabBarLabel: 'Create Order',
+          headerTitleAllowFontScaling: true,
+          headerTitle: 'Create Order',
+          headerTitleAlign: 'left',
+          tabBarActiveTintColor: '#0a3a5f',
+          headerLeft: ({tintColor}) => {
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10,
+                }}>
+                <HamburgerIcon
+                  tintColor="#0a3a5f"
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.openDrawer())
+                  }
+                />
+              </View>
+            );
+          },
+        })}
+        component={CreateOrderScreen}
       />
       <Tab.Screen
         name="Profile"

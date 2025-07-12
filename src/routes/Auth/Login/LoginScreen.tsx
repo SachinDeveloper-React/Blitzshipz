@@ -18,10 +18,12 @@ import {
 } from '../../../components';
 import {navigate} from '../../../navigation';
 import {useAuthService} from '../../../services';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type Props = {};
 
 const LoginScreen = (props: Props) => {
+  const {top} = useSafeAreaInsets();
   const {
     emailPattern,
     isSecure,
@@ -49,7 +51,7 @@ const LoginScreen = (props: Props) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{flexGrow: 1, padding: 24}}
             keyboardShouldPersistTaps="handled">
-            <View style={{flex: 1, justifyContent: 'space-evenly', gap: 32}}>
+            <View style={{flex: 1, gap: 32, paddingTop: top}}>
               <View
                 style={{
                   alignItems: 'center',
@@ -190,6 +192,37 @@ const LoginScreen = (props: Props) => {
                     Sign up
                   </CustomText>
                 </CustomText>
+              </View>
+
+              <View
+                style={{
+                  backgroundColor: '#eae6fd',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  padding: 20,
+                  gap: 12,
+                  borderRadius: 20,
+                }}>
+                <CustomText
+                  variant="body"
+                  style={{fontWeight: '600', color: '#034460'}}>
+                  Know when your order will arrive
+                </CustomText>
+                <CustomText
+                  variant="caption"
+                  style={{
+                    fontWeight: '600',
+                    color: '#888',
+                    textAlign: 'center',
+                  }}>
+                  You will be redirected to blitzshipz.com to track all your
+                  orders.
+                </CustomText>
+
+                <CustomButton
+                  title="Track Now"
+                  onPress={() => navigate('ShipmentTracking')}
+                />
               </View>
             </View>
           </ScrollView>

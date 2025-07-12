@@ -238,93 +238,213 @@ const useDashboardService = () => {
         FundApi.getBalance(),
       ]);
 
-      const overviewResponseData = [
-        {
-          title: 'Total Orders',
-          count: overview.data.data.totalOrder || '--',
-          icon: 'truck',
-          color: '#6B7FD7',
-        },
-        {
-          title: 'Live Orders',
-          count: overview.data.data.inTransitOrder || '--',
-          icon: 'truck',
-          color: '#F4C03E',
-        },
-        {
-          title: 'Pickup Scheduled',
-          count: overview.data.data.pickupScheduleOrder || '--',
-          icon: 'truck',
-          color: '#7C4DFF',
-        },
-        {
-          title: 'Fulfilled Orders',
-          count: overview.data.data.deliveredOrder || '--',
-          icon: 'truck',
-          color: '#4CAF50',
-        },
-        {
-          title: 'Non Delivered',
-          count: overview.data.data.pendingNdrOrder || '--',
-          icon: 'truck',
-          color: '#9E9E9E',
-        },
-        {
-          title: 'Cancelled Orders',
-          count: overview.data.data.canceledOrder || '--',
-          icon: 'truck',
-          color: '#1E88E5',
-        },
-        {
-          title: 'Return Orders',
-          count: overview.data.data.returnOrder || '--',
-          icon: 'truck',
-          color: '#FF7043',
-        },
-        {
-          title: "Today's Orders",
-          count: overview.data.data.todayOrder || '--',
-          icon: 'truck',
-          color: '#E91E63',
-        },
-      ];
-      const paiData = [
-        {
-          key: 'Live',
-          value: overview.data.data.inTransitOrder,
-          color: '#7bbae7',
-        },
-        {
-          key: 'Pickup Scheduled',
-          value: overview.data.data.pickupScheduleOrder,
-          color: '#6736fe',
-        },
-        {
-          key: 'Fulfilled',
-          value: overview.data.data.deliveredOrder,
-          color: '#34b579',
-        },
-        {
-          key: 'Non Delivered',
-          value: overview.data.data.nonDeliveredOrder,
-          color: '#fe6484',
-        },
-        {
-          key: 'Cancelled',
-          value: overview.data.data.canceledOrder,
-          color: '#5f9fa0',
-        },
-        {
-          key: 'Return',
-          value: overview.data.data.returnOrder,
-          color: '#c97e7d',
-        },
-      ];
-      setRevenueData(revenue.data.data?.reverse());
+      let overviewResponseData = [];
+      let paiData = [];
+      if (overview.code === 200) {
+        if (overview.data.status === 200) {
+          overviewResponseData.push(
+            ...[
+              {
+                title: 'Total Orders',
+                count: overview.data.data.totalOrder || '--',
+                icon: 'truck',
+                color: '#6B7FD7',
+              },
+              {
+                title: 'Live Orders',
+                count: overview.data.data.inTransitOrder || '--',
+                icon: 'truck',
+                color: '#F4C03E',
+              },
+              {
+                title: 'Pickup Scheduled',
+                count: overview.data.data.pickupScheduleOrder || '--',
+                icon: 'truck',
+                color: '#7C4DFF',
+              },
+              {
+                title: 'Fulfilled Orders',
+                count: overview.data.data.deliveredOrder || '--',
+                icon: 'truck',
+                color: '#4CAF50',
+              },
+              {
+                title: 'Non Delivered',
+                count: overview.data.data.pendingNdrOrder || '--',
+                icon: 'truck',
+                color: '#9E9E9E',
+              },
+              {
+                title: 'Cancelled Orders',
+                count: overview.data.data.canceledOrder || '--',
+                icon: 'truck',
+                color: '#1E88E5',
+              },
+              {
+                title: 'Return Orders',
+                count: overview.data.data.returnOrder || '--',
+                icon: 'truck',
+                color: '#FF7043',
+              },
+              {
+                title: "Today's Orders",
+                count: overview.data.data.todayOrder || '--',
+                icon: 'truck',
+                color: '#E91E63',
+              },
+            ],
+          );
+
+          paiData.push(
+            ...[
+              {
+                key: 'Live',
+                value: overview.data.data.inTransitOrder,
+                color: '#7bbae7',
+              },
+              {
+                key: 'Pickup Scheduled',
+                value: overview.data.data.pickupScheduleOrder,
+                color: '#6736fe',
+              },
+              {
+                key: 'Fulfilled',
+                value: overview.data.data.deliveredOrder,
+                color: '#34b579',
+              },
+              {
+                key: 'Non Delivered',
+                value: overview.data.data.nonDeliveredOrder,
+                color: '#fe6484',
+              },
+              {
+                key: 'Cancelled',
+                value: overview.data.data.canceledOrder,
+                color: '#5f9fa0',
+              },
+              {
+                key: 'Return',
+                value: overview.data.data.returnOrder,
+                color: '#c97e7d',
+              },
+            ],
+          );
+        } else {
+          overviewResponseData.push(
+            ...[
+              {
+                title: 'Total Orders',
+                count: '--',
+                icon: 'truck',
+                color: '#6B7FD7',
+              },
+              {
+                title: 'Live Orders',
+                count: '--',
+                icon: 'truck',
+                color: '#F4C03E',
+              },
+              {
+                title: 'Pickup Scheduled',
+                count: '--',
+                icon: 'truck',
+                color: '#7C4DFF',
+              },
+              {
+                title: 'Fulfilled Orders',
+                count: '--',
+                icon: 'truck',
+                color: '#4CAF50',
+              },
+              {
+                title: 'Non Delivered',
+                count: '--',
+                icon: 'truck',
+                color: '#9E9E9E',
+              },
+              {
+                title: 'Cancelled Orders',
+                count: '--',
+                icon: 'truck',
+                color: '#1E88E5',
+              },
+              {
+                title: 'Return Orders',
+                count: '--',
+                icon: 'truck',
+                color: '#FF7043',
+              },
+              {
+                title: "Today's Orders",
+                count: '--',
+                icon: 'truck',
+                color: '#E91E63',
+              },
+            ],
+          );
+
+          paiData.push(
+            ...[
+              {
+                key: 'Live',
+                value: 0,
+                color: '#7bbae7',
+              },
+              {
+                key: 'Pickup Scheduled',
+                value: 0,
+                color: '#6736fe',
+              },
+              {
+                key: 'Fulfilled',
+                value: 0,
+                color: '#34b579',
+              },
+              {
+                key: 'Non Delivered',
+                value: 0,
+                color: '#fe6484',
+              },
+              {
+                key: 'Cancelled',
+                value: 0,
+                color: '#5f9fa0',
+              },
+              {
+                key: 'Return',
+                value: 0,
+                color: '#c97e7d',
+              },
+            ],
+          );
+        }
+      }
+
+      if (revenue.code === 200) {
+        if (revenue.data.status === 200) {
+          setRevenueData(revenue.data.data?.reverse());
+        } else {
+          setRevenueData([]);
+        }
+      }
+      if (pickup.code === 200) {
+        if (pickup.data.status === 200) {
+          setPickupData(pickup.data.data);
+        } else {
+          setPickupData([]);
+        }
+      }
+      if (graph.code === 200) {
+        if (graph.data.status === 200) {
+          setGraphData(graph.data.data);
+        } else {
+          setGraphData([]);
+        }
+      }
+
       setOverviewData(overviewResponseData);
       setPaiChartData(paiData);
-      setGraphData(graph.data.data);
-      setPickupData(pickup.data.data);
+
       if (balance.code === 200 && !balance.error) {
         updateBalance(balance.data ?? 0);
       }

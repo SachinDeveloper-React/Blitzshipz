@@ -48,7 +48,7 @@ type useProfileDataState = {
   userProfileData: User | null;
   userProfileDoc: UserProfileDoc | null;
   setUserProfileData: (data: User) => void;
-  setUserProfileDocData: (data: UserProfileDoc) => void;
+  setUserProfileDocData: (data: UserProfileDoc | null) => void;
   updateUserProfileData: (data: User) => void;
   updateUserProfileDocData: (data: UserProfileDoc) => void;
 };

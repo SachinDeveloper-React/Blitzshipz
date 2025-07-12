@@ -22,11 +22,22 @@ const LineChartComponent = ({
   onStartDateChange: (event: any, selectedDate: Date | undefined) => void;
   onEndDateChange: (event: any, selectedDate: Date | undefined) => void;
 }) => {
+  console.log('data', data);
   const allValues = data.flatMap(item => item.vendorData.map(v => v.value));
-  const maxValue = Math.max(...allValues);
-  const dlData = processData(data, 'DL');
-  const dtData = processData(data, 'DT');
-  const bdData = processData(data, 'BD');
+  let maxValue = Math.max(...allValues);
+
+  const isEmpty = data.length === 0 || allValues.every(val => val === 0);
+
+  let dlData = processData(data, 'DL');
+  let dtData = processData(data, 'DT');
+  let bdData = processData(data, 'BD');
+
+  if (isEmpty) {
+    dlData = [{value: 0, label: 'No Data'}];
+    dtData = [{value: 0, label: 'No Data'}];
+    bdData = [{value: 0, label: 'No Data'}];
+    maxValue = 1;
+  }
 
   const {endDate, startDate} = useDasboardStore();
   const [showStartPicker, setShowStartPicker] = useState(false);

@@ -3,6 +3,7 @@ export const BASE_URL = isProduction ? 'https://backend.Blitzshipz.com' : '';
 export const URLS = {
   AUTH: {
     LOGIN: '/user/auth/login',
+    SIGNUP: '/user/auth/signup?refKey=false',
   },
   DASHBOARD: {
     OVERVIEWORDER: '/orders/dashboard/overview-order',
@@ -58,6 +59,9 @@ export const URLS = {
   CREATEORDER: {
     GETBOOKMYORDER: '/orders/filter-user',
     GETRATES: '/orders/get-rates',
+    GETSELLER: '/orders/seller/get',
+    CREATESELLER: '/orders/seller/create',
+    CREATEORDER: 'orders/create-order',
   },
   PRODUCT: {
     GETALLCATEGORY: 'orders/product/get-all-category',

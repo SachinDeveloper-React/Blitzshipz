@@ -96,6 +96,8 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
       <CustomText>{error.userProfileError || error.userWarehouses}</CustomText>
     );
   }
+
+  console.log('userProfileDoc', userProfileDoc);
   return (
     <ScrollView
       style={styles.container}
@@ -133,8 +135,11 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
           name={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
           verified={Boolean(userProfileData?.verified)}
           profile={
-            `data:image/png;base64,${userProfileDoc?.image[0].data.data}` ||
-            'https://www.app.Blitzships.com/images/dummy-dp.jpg'
+            userProfileDoc
+              ? {
+                  uri: `data:image/png;base64,${userProfileDoc?.image[0]?.data?.data}`,
+                }
+              : require('../../../assets/dummy-dp.jpg')
           }
           onPress={handleImage}
           loading={loading.profileImage}

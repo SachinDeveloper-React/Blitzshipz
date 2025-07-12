@@ -2,6 +2,9 @@ import {useState} from 'react';
 import {useAuthStore} from '../../store';
 import {AuthApi} from '../../networking';
 import * as Keychain from 'react-native-keychain';
+import {signupSchema} from '../../validations';
+import {goBack} from '../../navigation';
+import {showToast} from '../../utils';
 
 type AuthState = {
   email: string;
@@ -11,25 +14,19 @@ type AuthState = {
 };
 export type SignupState = {
   firstName: string;
-  isValidfirstName: boolean;
   lastName: string;
-  isValidlastName: boolean;
   phoneNumber: string;
-  isValidphoneNumber: boolean;
   email: string;
-  isValidEmail: boolean;
   password: string;
-  isValidPassword: boolean;
   confirmPassword: string;
-  isValidconfirmPassword: boolean;
 };
 
 const useAuthService = () => {
   const {login, logout} = useAuthStore();
   const [state, setState] = useState<AuthState>({
-    email: 'duashivam.a@gmail.com',
+    email: '',
     isValidEmail: false,
-    password: 'Blitzship@123',
+    password: '',
     isValidPassword: false,
   });
   const [loginErrorState, setLoginErrorState] = useState<AuthState>({
@@ -40,18 +37,16 @@ const useAuthService = () => {
   });
   const [signupState, setSignupState] = useState<SignupState>({
     firstName: '',
-    isValidfirstName: false,
     lastName: '',
-    isValidlastName: false,
     phoneNumber: '',
-    isValidphoneNumber: false,
     email: '',
-    isValidEmail: false,
     password: '',
-    isValidPassword: true,
     confirmPassword: '',
-    isValidconfirmPassword: true,
   });
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof SignupState, string>>
+  >({});
+  const [signUpServerError, setSignUpServerError] = useState('');
 
   const [isSecure, setIsSecure] = useState<{
     login: boolean;
@@ -65,6 +60,7 @@ const useAuthService = () => {
 
   const [loading, setLoading] = useState({
     login: false,
+    signup: false,
   });
 
   const title: string = 'Welcome to\nBlitzships!';
@@ -126,6 +122,53 @@ const useAuthService = () => {
     }
   };
 
+  const userSignUp = async () => {
+    try {
+      const {error} = signupSchema.validate(signupState, {abortEarly: false});
+
+      console.log('error', error);
+      if (error) {
+        const formattedErrors: {[key: string]: string} = {};
+        error.details.forEach(err => {
+          const key = err.path[0] as string;
+          formattedErrors[key] = err.message;
+        });
+        setErrors(formattedErrors);
+        return;
+      }
+
+      setLoading(prev => ({...prev, signup: true}));
+      const response = await AuthApi.register({
+        email: signupState.email,
+        mobileNumber: signupState.phoneNumber,
+        password: signupState?.password,
+        firstName: signupState.firstName,
+        lastName: signupState.lastName,
+        roles: ['admin'],
+      });
+
+      console.log('response', response);
+      if (response.code === 200) {
+        if (response.data.statusCode === 200) {
+          goBack();
+          showToast(response.data.message);
+        } else {
+          setSignUpServerError(
+            response?.data?.message || response.data || 'Unexpected Error',
+          );
+        }
+      } else {
+        setSignUpServerError(
+          response?.data?.message || response.data || 'Unexpected Error',
+        );
+      }
+    } catch (error: any) {
+      setSignUpServerError(error?.message || 'Unexpected Error');
+    } finally {
+      setLoading(prev => ({...prev, signup: false}));
+    }
+  };
+
   return {
     state,
     setState,
@@ -136,12 +179,15 @@ const useAuthService = () => {
     alphabetPattern,
     numberPattern,
     userLogin,
+    userSignUp,
     logout,
     signupTitle,
     signupState,
     setSignupState,
     loginErrorState,
     loading,
+    errors,
+    signUpServerError,
   };
 };
 

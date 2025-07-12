@@ -26,14 +26,15 @@ const SignupScreen = () => {
     emailPattern,
     alphabetPattern,
     numberPattern,
-    setState,
-    state,
     signupTitle,
-    userLogin,
     setSignupState,
     signupState,
     setIsSecure,
     isSecure,
+    errors,
+    userSignUp,
+    signUpServerError,
+    loading,
   } = useAuthService();
   const {width, height} = useWindowDimensions();
   const lastNameRef = useRef<TextInput>(null);
@@ -99,7 +100,6 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         firstName: text,
-                        isValidfirstName: alphabetPattern.test(text),
                       }))
                     }
                     keyboardType="default"
@@ -122,7 +122,6 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         firstName: '',
-                        isValidfirstName: false,
                       }))
                     }
                     returnKeyType="next"
@@ -131,6 +130,7 @@ const SignupScreen = () => {
                         lastNameRef.current?.focus();
                       }
                     }}
+                    errorMessage={errors.firstName}
                   />
 
                   <CustomTextInput
@@ -149,7 +149,6 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         lastName: text,
-                        isValidlastName: alphabetPattern.test(text),
                       }))
                     }
                     keyboardType="default"
@@ -172,11 +171,11 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         lastName: '',
-                        isValidlastName: false,
                       }))
                     }
                     returnKeyType="next"
                     onSubmitEditing={() => phoneRef.current?.focus()}
+                    errorMessage={errors.lastName}
                   />
 
                   <CustomTextInput
@@ -187,7 +186,6 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         phoneNumber: text,
-                        isValidphoneNumber: numberPattern.test(text),
                       }))
                     }
                     keyboardType="phone-pad"
@@ -211,11 +209,11 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         phoneNumber: '',
-                        isValidphoneNumber: false,
                       }))
                     }
                     returnKeyType="next"
                     onSubmitEditing={() => emailRef.current?.focus()}
+                    errorMessage={errors.phoneNumber}
                   />
 
                   <CustomTextInput
@@ -234,7 +232,6 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         email: text,
-                        isValidEmail: emailPattern.test(text),
                       }))
                     }
                     keyboardType="email-address"
@@ -258,11 +255,11 @@ const SignupScreen = () => {
                       setSignupState(prev => ({
                         ...prev,
                         email: '',
-                        isValidEmail: false,
                       }))
                     }
                     returnKeyType="next"
                     onSubmitEditing={() => passwordRef.current?.focus()}
+                    errorMessage={errors.email}
                   />
 
                   <CustomTextInput
@@ -303,6 +300,7 @@ const SignupScreen = () => {
                     }
                     returnKeyType="next"
                     onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+                    errorMessage={errors.password}
                   />
 
                   <CustomTextInput
@@ -345,16 +343,22 @@ const SignupScreen = () => {
                       }))
                     }
                     returnKeyType="done"
-                    onSubmitEditing={userLogin}
+                    errorMessage={errors.confirmPassword}
+                    onSubmitEditing={userSignUp}
                   />
+
+                  {signUpServerError && (
+                    <CustomText variant="caption" style={{color: 'red'}}>
+                      {signUpServerError}
+                    </CustomText>
+                  )}
 
                   <CustomButton
                     variant="primary"
                     title={'Continue'}
-                    disabled={Object.entries(signupState).some(([key, value]) =>
-                      key.startsWith('isValid') ? !value : value === '',
-                    )}
-                    onPress={userLogin}
+                    loading={loading.signup}
+                    disabled={loading.signup}
+                    onPress={userSignUp}
                   />
 
                   <View style={styles.orContainer}>

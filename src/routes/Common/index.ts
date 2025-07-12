@@ -10,9 +10,5 @@ export {WeightDiscrepancyScreen} from './WeightDiscrepancy';
 export {RateCalculatorScreen} from './RateCalculator';
 export {BalanceScreen} from './Fund';
 export {WarehouseScreen} from './Warehouse';
-export {
-  CreateOrderScreen,
-  BookmyOrderScreen,
-  RateScreen,
-  OrderDetailsScreen,
-} from './CreateOrder';
+export {SellerScreen} from './Seller';
+export {BookmyOrderScreen, RateScreen, OrderDetailsScreen} from './CreateOrder';

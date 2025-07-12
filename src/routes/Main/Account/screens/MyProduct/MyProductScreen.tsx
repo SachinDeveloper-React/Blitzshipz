@@ -6,7 +6,6 @@ import {
   RefreshControl,
   SafeAreaView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import React, {useEffect, useLayoutEffect} from 'react';
@@ -15,8 +14,7 @@ import {ProductCard} from './components';
 import {StackScreenProps} from '@react-navigation/stack';
 import {navigate, RootStackParamList} from '../../../../../navigation';
 import {CustomIcons} from '../../../../../components';
-
-type Props = {};
+import {NotFound} from '../../../../../layout';
 
 const MyProductScreen = ({
   navigation,
@@ -40,9 +38,6 @@ const MyProductScreen = ({
       headerRight: () => {
         return (
           <Pressable
-            style={{
-              paddingHorizontal: 15,
-            }}
             onPress={() =>
               navigate('ProductFormScreen', {
                 type: 'add',
@@ -113,6 +108,7 @@ const MyProductScreen = ({
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
           removeClippedSubviews
+          ListEmptyComponent={() => <NotFound title="No Data Found" />}
         />
       </View>
     </SafeAreaView>

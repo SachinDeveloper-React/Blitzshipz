@@ -9,6 +9,7 @@ import {
 import React, {useLayoutEffect} from 'react';
 import {FundStatusCard, TransactionCard} from '../../components';
 import {useFundService} from '../../../../../services';
+import {NotFound} from '../../../../../layout';
 
 type Props = {};
 
@@ -50,6 +51,7 @@ const RechargesScreen = (props: Props) => {
         removeClippedSubviews
         renderToHardwareTextureAndroid
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => <NotFound title="No Recharges Found" />}
       />
     </View>
   );

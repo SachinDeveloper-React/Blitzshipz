@@ -1,6 +1,6 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {VendorIcons} from '../../../../../../components';
+import {CustomText, VendorIcons} from '../../../../../../components';
 
 type Props = {
   data: {
@@ -32,12 +32,18 @@ const TodayPickupList = ({data}: Props) => {
       scrollEnabled={false}
       keyExtractor={(_, index) => index.toString()}
       renderItem={({item}) => <ListItem item={item} />}
-      contentContainerStyle={{paddingBottom: 20}}
       ItemSeparatorComponent={() => <View style={{height: 10}} />}
       initialNumToRender={10}
       updateCellsBatchingPeriod={10}
       removeClippedSubviews={true}
       maxToRenderPerBatch={10}
+      ListEmptyComponent={() => (
+        <CustomText
+          variant="subtitle"
+          style={{textAlign: 'center', padding: 20}}>
+          No pickup for today
+        </CustomText>
+      )}
     />
   );
 };

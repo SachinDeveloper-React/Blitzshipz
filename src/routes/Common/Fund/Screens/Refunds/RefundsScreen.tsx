@@ -9,6 +9,7 @@ import {
 import React, {useLayoutEffect} from 'react';
 import {useFundService} from '../../../../../services';
 import {FundStatusCard} from '../../components';
+import {NotFound} from '../../../../../layout';
 
 type Props = {};
 
@@ -49,6 +50,7 @@ const RefundsScreen = (props: Props) => {
         removeClippedSubviews
         renderToHardwareTextureAndroid
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => <NotFound title="No Refund Found" />}
       />
     </View>
   );

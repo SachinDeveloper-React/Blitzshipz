@@ -9,17 +9,13 @@ import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
-  Pressable,
 } from 'react-native';
 
 import {useChatSupportService} from '../../../../services';
 import {MessageBubble, ChatInputBar, ImagePreview} from './components';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {goBack, RootStackParamList} from '../../../../navigation';
-import {StatusBarHeight} from '../../../../utils';
 import {StatusBar} from 'react-native';
-import {CustomIcons} from '../../../../components';
 import {useHeaderHeight} from '@react-navigation/elements';
 type Props = NativeStackScreenProps<RootStackParamList, 'ChatSupportScreen'>;
 
@@ -59,16 +55,17 @@ const ChatSupportScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     navigation.setOptions({
       // headerShown: true,
-      headerTitle: () => (
-        <View>
-          <Text style={styles.ticketId} numberOfLines={1}>
-            {ticketId}
-          </Text>
-          <Text style={styles.awb} numberOfLines={1}>
-            {AWB_NO}
-          </Text>
-        </View>
-      ),
+      headerTitle: '',
+      // headerLeft: () => (
+      //   <View>
+      //     <Text style={styles.ticketId} numberOfLines={1}>
+      //       {ticketId}
+      //     </Text>
+      //     <Text style={styles.awb} numberOfLines={1}>
+      //       {AWB_NO}
+      //     </Text>
+      //   </View>
+      // ),
       headerRight: () => (
         <View style={{marginRight: 10}}>
           <Text numberOfLines={1} style={styles.category}>

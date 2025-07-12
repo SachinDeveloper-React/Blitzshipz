@@ -37,6 +37,7 @@ const CancelledOrders = () => {
   const exportExcelSheet = async () => {
     try {
       if (filterData.length < 0) return;
+      // await exportExcel(filterData || [], 'cancelled');
       await exportExcel(filterData || [], 'cancelled');
     } catch (error) {
       console.log('Error on excel ->', error);

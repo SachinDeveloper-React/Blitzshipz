@@ -1,11 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {
-  Platform,
-  PermissionsAndroid,
-  Alert,
-  ScrollView,
-  Keyboard,
-} from 'react-native';
+import {Platform, PermissionsAndroid, Alert, ScrollView} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {SettingApi} from '../../networking';
 import {showToast} from '../../utils';
@@ -154,8 +148,8 @@ const useChatSupportService = ({ticketID}: {ticketID: string}) => {
       },
       {
         text: 'Gallery',
-        onPress: () =>
-          ImagePickerService.pickImageWithPrompt(image => {
+        onPress: () => {
+          ImagePickerService.pickFromGallery(image => {
             if (image?.uri) {
               setSelectedImage(prev => ({
                 ...prev,
@@ -163,7 +157,22 @@ const useChatSupportService = ({ticketID}: {ticketID: string}) => {
                 imageUri: image?.uri ?? '',
               }));
             }
-          }),
+          });
+        },
+      },
+      {
+        text: 'Camera',
+        onPress: () => {
+          ImagePickerService.pickFromCamera(image => {
+            if (image?.uri) {
+              setSelectedImage(prev => ({
+                ...prev,
+                imageData: image,
+                imageUri: image?.uri ?? '',
+              }));
+            }
+          });
+        },
       },
       {
         text: 'Cancel',
