@@ -48,7 +48,7 @@ type StoreState = {
 // Create Zustand Store
 export const useDasboardStore = create<StoreState>(set => ({
   startDate: new Date(new Date().setDate(new Date().getDate() - 7)),
-  endDate: new Date(),
+  endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
   overviewData: null,
   graphData: null,
   revenueData: null,

@@ -22,7 +22,6 @@ const LineChartComponent = ({
   onStartDateChange: (event: any, selectedDate: Date | undefined) => void;
   onEndDateChange: (event: any, selectedDate: Date | undefined) => void;
 }) => {
-  console.log('data', data);
   const allValues = data.flatMap(item => item.vendorData.map(v => v.value));
   let maxValue = Math.max(...allValues);
 
@@ -59,7 +58,9 @@ const LineChartComponent = ({
               value={startDate}
               mode="date"
               display="default"
-              maximumDate={new Date()}
+              maximumDate={
+                new Date(new Date().setDate(new Date().getDate() + 1))
+              }
               onChange={onStartDateChange}
               accentColor="#fff"
               role="button"
@@ -68,7 +69,9 @@ const LineChartComponent = ({
               value={endDate}
               mode="date"
               display="default"
-              maximumDate={new Date()}
+              maximumDate={
+                new Date(new Date().setDate(new Date().getDate() + 1))
+              }
               onChange={onEndDateChange}
               role="button"
             />
@@ -179,7 +182,7 @@ const LineChartComponent = ({
         dataPointsColor={vendorColors.DL}
         dataPointsColor2={vendorColors.DT}
         dataPointsColor3={vendorColors.BD}
-        noOfSections={maxValue}
+        // noOfSections={maxValue}
         xAxisLabelTextStyle={{fontSize: 8, color: 'black'}}
         initialSpacing={5}
         endSpacing={5}

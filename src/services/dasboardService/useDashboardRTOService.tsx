@@ -88,7 +88,7 @@ const useDashboardRTOService = () => {
   const exportExcelSheet = async () => {
     try {
       if (!dateRange.fromDate || !dateRange.toDate) {
-        showToast('Please Select Date');
+        showToast('Please select both a start and end date to continue.');
         return;
       }
       const body = {
@@ -106,14 +106,15 @@ const useDashboardRTOService = () => {
 
       const excelData = await fetchFilterData(body);
 
-      if (excelData.data.content.length <= 0) {
-        showToast('No Data Found');
+      if (excelData.data.content.length === 0) {
+        showToast('No records available to export.');
         return;
       }
 
       await exportExcel(excelData.data.content || [], 'rto');
     } catch (error) {
-      console.log('Error on excel ->', error);
+      console.error('Excel export failed:', error);
+      showToast('Failed to export data. Please try again.');
     }
   };
 

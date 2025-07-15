@@ -46,7 +46,7 @@ const ShipmentDetails = ({order}: Props) => {
       <Card title="📬 Delivery Info">
         <Field label="Name" value={order.dropName} />
         <Field label="Phone" value={order.dropMobile} />
-        <Field label="Email" value={order.dropEmail} />
+        <Field label="Email" value={order.dropEmail || '--'} />
         <Field label="Address" value={order.dropAddress} />
         <Field
           label="City & State"
@@ -56,8 +56,8 @@ const ShipmentDetails = ({order}: Props) => {
 
       <Card title="📁 Additional Info">
         <Field
-          label="Seller"
-          value={`${order.sellerName} (${order.sellerAddress})`}
+          label="Seller & Address"
+          value={`${order.sellerName || '--'} (${order.sellerAddress || '--'})`}
         />
         <Field label="Fragile" value={order.fragile ? 'Yes' : 'No'} />
         <Field label="Weight Category" value={`${order.weightCategory}`} />

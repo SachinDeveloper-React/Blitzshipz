@@ -1,19 +1,9 @@
 import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import {OrderCard} from './components';
-import {navigate} from '../../../../../navigation';
+import {View, ActivityIndicator, RefreshControl} from 'react-native';
 import {useDashboardService} from '../../../../../services';
-import {OrderDetails} from '../../../../../types';
-import CustomListing from '../../../../../components/CustomListing';
-import {exportExcel} from '../../../../../utils/exportExcel';
+import {exportExcel} from '../../../../../utils';
+import {showToast} from '../../../../../utils';
+import {CustomListing, ExcelHeader} from '../../../../../components';
 
 const CancelledOrders = () => {
   const {CancelledFilterUser, filterData, loadMore, loading, onRefresh} =
@@ -37,29 +27,16 @@ const CancelledOrders = () => {
   const exportExcelSheet = async () => {
     try {
       if (filterData.length < 0) return;
-      // await exportExcel(filterData || [], 'cancelled');
       await exportExcel(filterData || [], 'cancelled');
     } catch (error) {
-      console.log('Error on excel ->', error);
+      console.error('Excel export failed:', error);
+      showToast('Failed to export data. Please try again.');
     }
   };
 
   return (
     <>
-      <View
-        style={{
-          paddingHorizontal: 16,
-          alignItems: 'flex-end',
-        }}>
-        <TouchableOpacity onPress={exportExcelSheet}>
-          <Image
-            source={require('../../../../../assets/excelImage.png')}
-            style={{width: 60, height: 60}}
-            resizeMethod="scale"
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </View>
+      <ExcelHeader title="Cancelled" onPress={exportExcelSheet} />
       <CustomListing
         data={filterData}
         refreshControl={

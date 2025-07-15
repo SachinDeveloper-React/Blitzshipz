@@ -63,7 +63,7 @@ const useAuthService = () => {
     signup: false,
   });
 
-  const title: string = 'Welcome to\nBlitzships!';
+  const title: string = 'Welcome to Blitzshipz!';
   const signupTitle: string = 'Signup with Blitzships!!';
   const emailPattern: RegExp =
     /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;

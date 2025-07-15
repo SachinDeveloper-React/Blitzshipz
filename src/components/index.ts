@@ -13,3 +13,4 @@ export {default as ShownDocument} from './ShownDocument';
 export {HamburgerIcon} from './Icons';
 export {default as VendorIcons} from './VendorIcons';
 export {default as CustomDatePickerModal} from './CustomDatePickerModal';
+export {default as ExcelHeader} from './ExcelHeader';

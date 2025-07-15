@@ -1,4 +1,3 @@
-import {StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNdrStore} from '../../store';
 import {DashboardApi, fetchFilterData} from '../../networking';
@@ -89,6 +88,10 @@ const useDashboardNDRService = () => {
 
   const exportExcelSheet = async () => {
     try {
+      if (!dateRange.fromDate || !dateRange.toDate) {
+        showToast('Please select both a start and end date to continue.');
+        return;
+      }
       const body = {
         day: 0,
         fromDate: formatDate(dateRange.fromDate) ?? '',
@@ -104,14 +107,15 @@ const useDashboardNDRService = () => {
 
       const excelData = await fetchFilterData(body);
 
-      if (excelData.data.content.length <= 0) {
-        showToast('No Data Found');
+      if (excelData.data.content.length === 0) {
+        showToast('No records available to export.');
         return;
       }
 
       await exportExcel(excelData.data.content || [], 'rto');
     } catch (error) {
-      console.log('Error on excel ->', error);
+      console.error('Excel export failed:', error);
+      showToast('Failed to export data. Please try again.');
     }
   };
 

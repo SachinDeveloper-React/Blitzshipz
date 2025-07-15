@@ -37,14 +37,6 @@ export const createDropDetailsSchema = Joi.object({
     .pattern(/^\d{6}$/)
     .required()
     .label('Drop Pincode'),
-
-  dropLandmark: Joi.string().required().label('Drop Landmark'),
-
-  referenceNumber: Joi.string()
-    .alphanum()
-    .max(30)
-    .required()
-    .label('Reference Number'),
 }).unknown(true);
 
 export const productSchema = Joi.object({

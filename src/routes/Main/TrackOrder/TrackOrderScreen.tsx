@@ -17,6 +17,7 @@ import {FilterModal, OrderTrackCard} from './components';
 import {OrderDetails} from '../../../types';
 import {useTrackingOrderService} from '../../../services';
 import {exportExcel} from '../../../utils/exportExcel';
+import {showToast} from '../../../utils';
 
 const TrackOrderScreen = ({
   navigation,
@@ -41,7 +42,8 @@ const TrackOrderScreen = ({
       if (loading.excelDataLoading) return;
       await exportExcel(excelData || [], 'track');
     } catch (error) {
-      console.log('Error on excel ->', error);
+      console.error('Excel export failed:', error);
+      showToast('Failed to export data. Please try again.');
     }
   };
 
