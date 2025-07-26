@@ -16,4 +16,5 @@ export {
 export {blobToArrayBuffer} from './blobToArrayBuffer';
 export {s3FileUploader} from './s3FileUploader';
 export {requestFilePermission} from './permission';
+export {NavigationWatcher} from './OrderResetWatcher';
 export {default as useKeyboardOffsetHeight} from './useKeyboardOffsetHeight';

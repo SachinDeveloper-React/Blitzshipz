@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 6,
+
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -55,7 +56,7 @@ export const styles = StyleSheet.create({
     }),
   },
 
-  gapcolumn: {flexDirection: 'column', gap: 10},
+  gapcolumn: {flexDirection: 'column', gap: 20},
 
   boxContainer: {
     backgroundColor: '#007AFF',

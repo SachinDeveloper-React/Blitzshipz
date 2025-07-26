@@ -40,6 +40,12 @@ const TrackOrderScreen = ({
   const exportExcelSheet = async () => {
     try {
       if (loading.excelDataLoading) return;
+
+      if (!filter.fromDate || !filter.toDate) {
+        showToast('Please select both a start and end date to continue.');
+        return;
+      }
+
       await exportExcel(excelData || [], 'track');
     } catch (error) {
       console.error('Excel export failed:', error);

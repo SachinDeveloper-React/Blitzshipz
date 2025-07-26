@@ -11,6 +11,7 @@ import {
 } from '../../routes';
 import {HamburgerIcon} from '../../components';
 import {DrawerActions} from '@react-navigation/native';
+import {useCreateOrderStore} from '../../store';
 type Props = {};
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -117,6 +118,12 @@ const TabNavigator = (props: Props) => {
           },
         })}
         component={CreateOrderScreen}
+        listeners={() => ({
+          tabPress: () => {
+            useCreateOrderStore.getState().setType('create');
+            useCreateOrderStore.getState().resetOrder();
+          },
+        })}
       />
       <Tab.Screen
         name="Profile"

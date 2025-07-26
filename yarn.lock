@@ -2129,6 +2129,16 @@
   dependencies:
     invariant "^2.2.4"
 
+"@react-native-documents/picker@^10.1.5":
+  version "10.1.5"
+  resolved "https://registry.npmjs.org/@react-native-documents/picker/-/picker-10.1.5.tgz"
+  integrity sha512-ajn55rNyxUqbQbz5gmm9gYFI1ifHBmMLH4jVWViA7IFqk1EiEM+pJcpoHizWr5hetR6tzQsaoI4vzCNv/WyA7w==
+
+"@react-native-documents/viewer@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@react-native-documents/viewer/-/viewer-1.0.1.tgz"
+  integrity sha512-0mn+UkQ/+NYNgHQoVVXiIwTaPDNZ1vH8xgjYNOerDcpihMWRGoDT5zmwk1jAC9YxgTEoKttFRA+0JhEt+4cnFQ==
+
 "@react-native-picker/picker@^2.11.0":
   version "2.11.1"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.11.1.tgz"

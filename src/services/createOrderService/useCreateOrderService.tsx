@@ -22,8 +22,17 @@ const useCreateOrderService = () => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {user} = useAuthStore();
   const headerHeight = useHeaderHeight();
-  const {state, setOrderField, errors, setError, clearErrors, resetOrder} =
-    useCreateOrderStore();
+  const {
+    type,
+    state,
+    setOrderField,
+    errors,
+    setError,
+    clearErrors,
+    resetOrder,
+  } = useCreateOrderStore();
+
+  console.log('state', state);
   const {warehouses, setWarehouses} = useWarehouseStore();
   const {
     sellers,
@@ -73,6 +82,7 @@ const useCreateOrderService = () => {
   ) => {
     try {
       const response = await WarehouseApi.fetchCityAndStateFromPin(pin);
+
       if (response.code === 200) {
         if (type === 'pin') {
           setOrderField('dropCity', response.data.city);
@@ -81,6 +91,14 @@ const useCreateOrderService = () => {
           setOrderField('dropCity', response.data.city);
           setOrderField('dropState', response.data.state);
         }
+      } else {
+        console.log('Erroor', response);
+        setError(
+          type === 'pin' ? 'dropPincode' : 'returnPincode',
+          'Pincode not found',
+        );
+        setOrderField('dropCity', '');
+        setOrderField('dropState', '');
       }
     } catch (error) {
       console.error('Error fetching city/state:', error);
@@ -89,23 +107,151 @@ const useCreateOrderService = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const payload = {...state};
-      const response = await CreateOrderApi.createOrder(payload);
+      const payload =
+        type === 'create'
+          ? {
+              fragile: state.fragile,
+              paymentMode: state.paymentMode,
+              warehouseName: state.warehouseName,
+              pickupAddress: state.pickupAddress,
+              pickupAlternative_mobile: state.pickupAlternative_mobile,
+              pickupCity: state.pickupCity,
+              pickupEmail: state.pickupEmail,
+              pickupLandmark: state.pickupLandmark,
+              pickupMobile: state.pickupMobile,
+              pickupName: state.pickupName,
+              pickupPincode: state.pickupPincode,
+              pickupState: state.pickupState,
+              sellerName: state.sellerName,
+              sellerAddress: state.sellerAddress,
+              returnAddress: state.returnAddress,
+              returnAlternative_mobile: state.returnAlternative_mobile,
+              returnCity: state.returnCity,
+              returnEmail: state.returnEmail,
+              returnLandmark: state.returnLandmark,
+              returnMobile: state.returnMobile,
+              returnName: state.returnName,
+              returnPincode: state.returnPincode,
+              referenceNumber: state.referenceNumber,
+              returnState: state.returnState,
+              dropAddress: state.dropAddress,
+              dropAlternative_mobile: state.dropAlternative_mobile,
+              dropCity: state.dropCity,
+              dropEmail: state.dropEmail,
+              dropLandmark: state.dropLandmark,
+              dropMobile: state.dropMobile,
+              dropName: state.dropName,
+              dropPincode: state.dropPincode,
+              dropState: state.dropState,
+              productName: state.productName,
+              productPrice: state.productPrice,
+              productQuantity: state.productQuantity,
+              productCategory: state.productCategory,
+              invoiceDate: state.invoiceDate,
+              sameReturnOrder: state.sameReturnOrder,
+              totalTaxes: state.totalTaxes,
+              totalAmount: state.totalAmount,
+              actualWeight: state.actualWeight,
+              volumentricWeight: state.volumentricWeight,
+              l: state.l,
+              b: state.b,
+              h: state.h,
+            }
+          : {
+              actualWeight: state.actualWeight,
+              amount: state.totalAmount,
+              b: state.b,
+              channel: state.channel,
+              channelId: state.channelId,
+              createDate: state.createDate,
+              deliveryCount: state.deliveryCount,
+              dropAddress: state.dropAddress,
+              dropAlternative_mobile: state.dropAlternative_mobile,
+              dropCity: state.dropCity,
+              dropEmail: state.dropEmail,
+              dropLandmark: state.dropLandmark,
+              dropMobile: state.dropMobile,
+              dropName: state.dropName,
+              dropPincode: state.dropPincode,
+              dropState: state.dropState,
+              fragile: state.fragile,
+              h: state.h,
+              instructions: state.instructions,
+              invoiceDate: state.invoiceDate,
+              l: state.l,
+              modifyDate: state.modifyDate,
+              nslCode: state.nslCode,
+              orderId: state.orderId,
+              orderLive: state.orderLive,
+              orderLiveDate: state.orderLiveDate,
+              orderResponseId: state.orderResponseId,
+              paymentMode: state.paymentMode,
+              pickupAddress: state.pickupAddress,
+              pickupAlternative_mobile: state.pickupAlternative_mobile,
+              pickupCity: state.pickupCity,
+              pickupEmail: state.pickupEmail,
+              pickupLandmark: state.pickupLandmark,
+              pickupMobile: state.pickupMobile,
+              pickupName: state.pickupName,
+              pickupPincode: state.pickupPincode,
+              pickupState: state.pickupState,
+              productCategory: state.productCategory,
+              productIds: state.productIds,
+              productName: state.productName,
+              productPrice: state.productPrice,
+              productQuantity: state.productQuantity,
+              referenceNumber: state.referenceNumber,
+              returnAddress: state.returnAddress,
+              returnAlternative_mobile: state.returnAlternative_mobile,
+              returnCity: state.returnCity,
+              returnEmail: state.returnEmail,
+              returnLandmark: state.returnLandmark,
+              returnMobile: state.returnMobile,
+              returnName: state.returnName,
+              returnPincode: state.returnPincode,
+              returnState: state.returnState,
+              reverseMarked: state.reverseMarked,
+              rtoMarked: state.rtoMarked,
+              sameReturnOrder: state.sameReturnOrder,
+              sellerAddress: state.sellerAddress,
+              sellerName: state.sellerName,
+              status: state.status,
+              statusDateTime: state.statusDateTime,
+              statusLocation: state.statusLocation,
+              statusType: state.statusType,
+              totalAmount: state.totalAmount,
+              totalTaxes: state.totalTaxes,
+              uploadWbn: state.uploadWbn,
+              vendorCode: state.vendorCode,
+              volumentricWeight: state.volumentricWeight,
+              warehouseName: state.warehouseName,
+              waybill: state.waybill,
+              weightCategory: state.weightCategory,
+              zone: state.zone,
+            };
+      const response =
+        type === 'create'
+          ? await CreateOrderApi.createOrder(payload as any)
+          : await CreateOrderApi.editOrder(state?.id ?? '', payload as any);
 
+      console.log('response', response);
       if (response.code === 200) {
         const {statusCode, message} = response.data;
 
         if (statusCode === 200) {
           showToast(message || 'Order created successfully');
           if (navigation?.canGoBack()) {
-            navigation?.pop(2);
+            navigation?.pop(3);
             clearErrors();
             resetOrder();
-            setTimeout(() => {
-              navigation.navigate('Drawer', {
-                screen: 'BookmyOrderScreen',
-              });
-            }, 100);
+
+            if (type === 'create') {
+              setTimeout(() => {
+                navigation.navigate('Drawer', {
+                  screen: 'BookmyOrderScreen',
+                });
+              }, 100);
+            }
           }
         } else {
           showToast(message || 'Something went wrong while creating the order');
@@ -203,6 +349,7 @@ const useCreateOrderService = () => {
   }, [state.dropPincode]);
 
   return {
+    type,
     errors,
     state,
     warehouses,

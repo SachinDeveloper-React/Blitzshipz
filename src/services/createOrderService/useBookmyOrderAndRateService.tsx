@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useOrderStore} from '../../store';
 import {CreateOrderApi} from '../../networking';
+import {showToast} from '../../utils';
 
 type Props = {};
 
@@ -101,6 +102,16 @@ const useBookmyOrderAndRateService = () => {
     await fetchOrders(true, false, 0);
   };
 
+  const deleteMenifestOrder = async (id: string) => {
+    const response = await CreateOrderApi.deleteOrder(id);
+
+    if (response.code === 200 && response?.data?.statusCode === 200) {
+      showToast(response?.data?.message || 'Manifest deleted.!');
+      onRefresh();
+    } else {
+      showToast(response?.data?.message || 'Manifest Not deleted!');
+    }
+  };
   return {
     handleLoadMore,
     orders,
@@ -109,6 +120,7 @@ const useBookmyOrderAndRateService = () => {
     fetchRates,
     fetchOrders,
     ratesData,
+    deleteMenifestOrder,
   };
 };
 

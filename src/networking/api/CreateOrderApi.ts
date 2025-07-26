@@ -60,13 +60,13 @@ const CreateOrderApi = {
     sellerName: string;
     sellerAddress: string;
     returnAddress: string;
-    returnAlternative_mobile: string;
-    returnCity: string;
-    returnEmail: string;
-    returnLandmark: string;
-    returnMobile: string;
-    returnName: string;
-    returnPincode: string;
+    returnAlternative_mobile: string | null;
+    returnCity: string | null;
+    returnEmail: string | null;
+    returnLandmark: string | null;
+    returnMobile: string | null;
+    returnName: string | null;
+    returnPincode: string | null;
     referenceNumber: string;
     returnState: string;
     dropAddress: string;
@@ -100,6 +100,92 @@ const CreateOrderApi = {
       return errorHandler(error);
     }
   },
+  editOrder: async (
+    id: string,
+    body: {
+      actualWeight: string | number;
+      amount: string | number;
+      b: string | number;
+      channel: string | null;
+      channelId: string | null;
+      createDate: string;
+      deliveryCount: number | string;
+      dropAddress: string;
+      dropAlternative_mobile: string;
+      dropCity: string;
+      dropEmail: string;
+      dropLandmark: string;
+      dropMobile: string;
+      dropName: string;
+      dropPincode: string;
+      dropState: string;
+      fragile: boolean;
+      h: string | number;
+      instructions: null;
+      invoiceDate: string;
+      l: string | number;
+      modifyDate: string;
+      nslCode: null;
+      orderId: string;
+      orderLive: boolean;
+      orderLiveDate: null;
+      orderResponseId: null;
+      paymentMode: 'COD' | 'Prepaid';
+      pickupAddress: string;
+      pickupAlternative_mobile: string;
+      pickupCity: string;
+      pickupEmail: string;
+      pickupLandmark: string;
+      pickupMobile: string;
+      pickupName: string;
+      pickupPincode: string;
+      pickupState: string;
+      productCategory: string;
+      productIds?: string[]; // Optional
+      productName: string;
+      productPrice: string | number;
+      productQuantity: number | string;
+      referenceNumber: string | number;
+      returnAddress: string;
+      returnAlternative_mobile: string | null;
+      returnCity: string;
+      returnEmail: string | null;
+      returnLandmark: string;
+      returnMobile: string | null;
+      returnName: string | null;
+      returnPincode: string | null;
+      returnState: string;
+      reverseMarked: boolean;
+      rtoMarked: boolean;
+      sameReturnOrder: boolean;
+      sellerAddress: string;
+      sellerName: string;
+      status: null;
+      statusDateTime: null;
+      statusLocation: null;
+      statusType: null;
+      totalAmount: string | number;
+      totalTaxes: string | number;
+      uploadWbn: null;
+      vendorCode: null;
+      volumentricWeight: string | number;
+      warehouseName: string;
+      waybill: null;
+      weightCategory: string;
+      zone: string;
+    },
+  ) => {
+    try {
+      const response = await ApiClient.post(
+        `${URLS.CREATEORDER.EDITORDER}${id}`,
+        body,
+      );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('error', error);
+      return errorHandler(error);
+    }
+  },
 
   createSellerDetails: async (body: {name: string; address: string}) => {
     try {
@@ -108,6 +194,18 @@ const CreateOrderApi = {
         body,
       );
 
+      return responseHandler(response);
+    } catch (error) {
+      console.log('error', error);
+      return errorHandler(error);
+    }
+  },
+
+  deleteOrder: async (id: string) => {
+    try {
+      const response = await ApiClient.delete(
+        `${URLS.CREATEORDER.DELETEORDER}${id}`,
+      );
       return responseHandler(response);
     } catch (error) {
       console.log('error', error);

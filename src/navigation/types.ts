@@ -13,8 +13,7 @@ export type AuthStackParamList = {
   Signup: undefined;
 };
 export type DrawerStackParamList = {
-  Main: NavigatorScreenParams<BottomTabParamList>;
-  Home: undefined;
+  Home: NavigatorScreenParams<BottomTabParamList>;
   CodScreen: undefined;
   WeightDiscrepancyScreen: undefined;
   RateCalculatorScreen: undefined;
@@ -127,4 +126,5 @@ export type RootStackParamList = {
   DropingDetailsScreen: undefined;
   ProductDetailsScreen: undefined;
   SellerScreen: undefined;
+  EditOrderScreen: undefined;
 };

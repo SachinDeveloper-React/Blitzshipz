@@ -112,7 +112,7 @@ const useDashboardNDRService = () => {
         return;
       }
 
-      await exportExcel(excelData.data.content || [], 'rto');
+      await exportExcel(excelData.data.content || [], 'ndr');
     } catch (error) {
       console.error('Excel export failed:', error);
       showToast('Failed to export data. Please try again.');

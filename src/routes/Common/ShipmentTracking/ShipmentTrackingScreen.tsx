@@ -61,23 +61,20 @@ const ShipmentTrackingScreen = (props: Props) => {
 
                 <View style={styles.card}>
                   <View style={styles.gapcolumn}>
-                    <CustomText variant="subtitle">
-                      Track Your Shipment
-                    </CustomText>
+                    <CustomText variant="subtitle">Track Order</CustomText>
                     <CustomText variant="caption">
-                      Get instant access to all your Orders at one place. We
-                      track all your orders in real-time
+                      Track your order status in real-time
                     </CustomText>
                     <View style={styles.gapcolumn}>
                       <CustomTextInput
-                        label="Phone Number"
-                        countryCode="+91"
+                        label="Please enter your order ID"
+                        countryCode=""
                         value={phone}
                         onChangeText={setPhone}
                         style={styles.textInput}
                         keyboardType="numeric"
                         inputMode="numeric"
-                        placeholder="Enter your 10-digit mobile number"
+                        placeholder="Your Package Tracking Number"
                         maxLength={10}
                         rightIcon={
                           phone ? (
@@ -91,7 +88,7 @@ const ShipmentTrackingScreen = (props: Props) => {
                         }
                         onRightIconPress={() => setPhone('')}
                       />
-                      <CustomText variant="caption">
+                      {/* <CustomText variant="caption">
                         Click "verify OTP" to signup with Blitzship while
                         accepting our{' '}
                         <CustomText
@@ -99,11 +96,11 @@ const ShipmentTrackingScreen = (props: Props) => {
                           style={{fontWeight: '600', color: 'blue'}}>
                           Terms & Conditions
                         </CustomText>
-                      </CustomText>
+                      </CustomText> */}
                       <CustomButton
                         variant="primary"
-                        title="Send OTP"
-                        disabled={phone.length !== 10}
+                        title="Submit"
+                        disabled={!phone}
                         onPress={function (event: GestureResponderEvent): void {
                           console.log('Continue pressed');
                         }}
@@ -115,7 +112,7 @@ const ShipmentTrackingScreen = (props: Props) => {
                     </CustomText>
                   </View>
                 </View>
-
+                {/* 
                 <View style={styles.boxContainer}>
                   <Image
                     source={{
@@ -154,8 +151,8 @@ const ShipmentTrackingScreen = (props: Props) => {
                       />
                     </View>
                   </View>
-                </View>
-                <View style={styles.productIssueBoxContainer}>
+                </View> */}
+                {/* <View style={styles.productIssueBoxContainer}>
                   <CustomButton
                     size="small"
                     title="Write to Us"
@@ -191,7 +188,7 @@ const ShipmentTrackingScreen = (props: Props) => {
                       borderRadius: 16,
                     }}
                   />
-                </View>
+                </View> */}
               </View>
             </View>
           </ScrollView>

@@ -7,7 +7,9 @@ import {
   BankingDetailsScreen,
   ChangePasswordScreen,
   ChatSupportScreen,
+  CreateOrderScreen,
   DropingDetailsScreen,
+  EditOrderScreen,
   EditProfileScreen,
   FaqScreen,
   InvoiceScreen,
@@ -50,6 +52,10 @@ const AppNavigator = (props: Props) => {
       ) : (
         <RootStack.Group>
           <RootStack.Screen name="Drawer" component={DrawerNavigator} />
+          <RootStack.Screen
+            name="EditOrderScreen"
+            component={EditOrderScreen}
+          />
 
           <RootStack.Screen
             name="ProductTracking"

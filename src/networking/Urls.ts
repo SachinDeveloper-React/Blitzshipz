@@ -62,6 +62,8 @@ export const URLS = {
     GETSELLER: '/orders/seller/get',
     CREATESELLER: '/orders/seller/create',
     CREATEORDER: 'orders/create-order',
+    EDITORDER: '/orders/edit-order/',
+    DELETEORDER: '/orders/delete-order-manifest?orderId=',
   },
   PRODUCT: {
     GETALLCATEGORY: 'orders/product/get-all-category',

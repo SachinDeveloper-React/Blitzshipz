@@ -14,12 +14,12 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {CustomButton, CustomIcons} from '../../../components';
-import {BottomTabParamList, navigate} from '../../../navigation';
+import {navigate, RootStackParamList} from '../../../navigation';
 import {useCreateOrderService} from '../../../services';
 
-const CreateOrderScreen = ({
+const EditOrderScreen = ({
   navigation,
-}: NativeStackScreenProps<BottomTabParamList, 'CreateOrderScreen'>) => {
+}: NativeStackScreenProps<RootStackParamList, 'EditOrderScreen'>) => {
   const {
     errors,
     state,
@@ -29,7 +29,6 @@ const CreateOrderScreen = ({
     setOrderField,
     handleToPickup,
     fetchAllData,
-
     type,
   } = useCreateOrderService();
 
@@ -51,6 +50,9 @@ const CreateOrderScreen = ({
 
   useEffect(() => {
     navigation.setOptions({
+      headerShown: true,
+      headerTitle: 'Edit Order',
+      headerBackButtonDisplayMode: 'minimal',
       headerRight: () => {
         return (
           <TouchableOpacity
@@ -252,7 +254,7 @@ const CreateOrderScreen = ({
   );
 };
 
-export default CreateOrderScreen;
+export default EditOrderScreen;
 
 const styles = StyleSheet.create({
   container: {

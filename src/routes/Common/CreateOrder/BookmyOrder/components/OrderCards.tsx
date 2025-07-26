@@ -16,6 +16,8 @@ type Props = {
   onPay: (id: string) => void;
   onDelete: (id: string) => void;
   onPress: (item: OrderItem) => void;
+  isSelected: boolean;
+  onSelect: () => void;
 };
 
 const formatDate = (dateString?: string | null): string => {
@@ -34,9 +36,17 @@ const OrderCard: React.FC<Props> = ({
   onPay,
   onDelete,
   onPress,
+  isSelected,
+  onSelect,
 }) => {
   return (
-    <Pressable style={styles.card} onPress={() => onPress(item)}>
+    <Pressable
+      style={[
+        styles.card,
+        isSelected && {borderWidth: 2, borderColor: '#1976d2'},
+      ]}
+      onLongPress={onSelect}
+      onPress={() => onPress(item)}>
       <View style={styles.header}>
         <CustomText variant="subtitle">{item.orderId}</CustomText>
         <View style={styles.actions}>

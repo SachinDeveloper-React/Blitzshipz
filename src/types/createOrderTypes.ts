@@ -1,4 +1,5 @@
 export interface CreateOrderState {
+  id?: string;
   warehouseName: string;
   pickupName: string;
   pickupEmail: string;
@@ -9,12 +10,12 @@ export interface CreateOrderState {
   pickupState: string;
   pickupAddress: string;
   pickupLandmark: string;
-  sameReturnOrder: string;
-  returnName: string;
-  returnEmail: string;
-  returnMobile: string;
-  returnAlternative_mobile: string;
-  returnPincode: string;
+  sameReturnOrder: boolean;
+  returnName: string | null;
+  returnEmail: string | null;
+  returnMobile: string | null;
+  returnAlternative_mobile: string | null;
+  returnPincode: string | null;
   returnCity: string;
   returnState: string;
   returnAddress: string;
@@ -30,21 +31,46 @@ export interface CreateOrderState {
   dropAlternative_mobile: string;
   dropPincode: string;
   dropLandmark: string;
-  referenceNumber: string;
-  totalTaxes: string;
-  totalAmount: string;
+  referenceNumber: string | number;
+  totalTaxes: string | number;
+  totalAmount: string | number;
   fragile: boolean;
-  l: string;
-  b: string;
-  h: string;
+  l: string | number;
+  b: string | number;
+  h: string | number;
   paymentMode: 'COD' | 'Prepaid';
   productCategory: string;
   productName: string;
-  productPrice: string;
+  productPrice: string | number;
   productQuantity: number | string;
-  volumentricWeight: string;
-  actualWeight: string;
+  volumentricWeight: string | number;
+  actualWeight: string | number;
   invoiceDate: string;
+  productIds?: string[];
+  orderLive: boolean;
+  weightCategory: string;
+  orderId: string;
+  createDate: string;
+  modifyDate: string;
+  userId: string;
+  zone: string;
+  amount: string | number;
+  waybill: null;
+  uploadWbn: null;
+  orderResponseId: null;
+  vendorCode: null;
+  orderLiveDate: null;
+  nslCode: null;
+  status: null;
+  statusDateTime: null;
+  statusType: null;
+  statusLocation: null;
+  instructions: null;
+  rtoMarked: boolean;
+  deliveryCount: number | string;
+  reverseMarked: boolean;
+  channel: string | null;
+  channelId: string | null;
 }
 
 // types/warehouse.ts
@@ -87,12 +113,14 @@ export interface WarehouseStore {
 
 export interface CreateOrderStore {
   state: CreateOrderState;
+  type: 'edit' | 'create';
+  setType: (type: 'edit' | 'create') => void;
   setOrderField: <K extends keyof CreateOrderState>(
     key: K,
     value: CreateOrderState[K],
   ) => void;
   resetOrder: () => void;
-  fillFromState: (data: Partial<CreateOrderState>) => void;
+  fillFromState: (data: CreateOrderState) => void;
   errors: Record<string, string>;
   setError: (field: string, message: string) => void;
   clearErrors: () => void;

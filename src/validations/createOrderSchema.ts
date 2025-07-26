@@ -5,16 +5,6 @@ export const createOrderSchema = Joi.object({
     'string.empty': 'Pickup address is required',
     'any.required': 'Pickup address is required',
   }),
-
-  sellerName: Joi.string().trim().required().messages({
-    'string.empty': 'Seller name is required',
-    'any.required': 'Seller name is required',
-  }),
-
-  sellerAddress: Joi.string().trim().required().messages({
-    'string.empty': 'Seller address is required',
-    'any.required': 'Seller address is required',
-  }),
 }).unknown(true);
 
 export const createDropDetailsSchema = Joi.object({
@@ -25,16 +15,16 @@ export const createDropDetailsSchema = Joi.object({
     .required()
     .label('Drop Mobile'),
 
-  dropAlternative_mobile: Joi.string()
-    .pattern(/^[6-9]\d{9}$/)
-    .required()
-    .label('Drop Alternative Mobile'),
-
   dropAddress: Joi.string().min(5).required().label('Drop Address'),
-
-  dropPincode: Joi.string()
-    .length(6)
-    .pattern(/^\d{6}$/)
+  dropCity: Joi.string().required().label('Drop City'),
+  dropState: Joi.string().required().label('Drop State'),
+  dropPincode: Joi.alternatives()
+    .try(
+      Joi.string()
+        .pattern(/^\d{6}$/)
+        .length(6),
+      Joi.number().integer().min(100000).max(999999),
+    )
     .required()
     .label('Drop Pincode'),
 }).unknown(true);

@@ -28,17 +28,15 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {navigate, RootStackParamList} from '../../../../navigation';
 
-type Props = {};
-
 const ProductDetailsScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, 'ProductDetailsScreen'>) => {
   const {
+    type,
     state,
     errors,
     headerHeight,
     setOrderField,
-    handleToDroping,
     handleToCreateBooking,
   } = useCreateOrderService();
   const {myProduct, fetchData} = useProfileMyProductService();
@@ -55,9 +53,9 @@ const ProductDetailsScreen = ({
   const hRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    const l = parseFloat(state.l) || 0;
-    const b = parseFloat(state.b) || 0;
-    const h = parseFloat(state.h) || 0;
+    const l = parseFloat(state.l.toString()) || 0;
+    const b = parseFloat(state.b.toString()) || 0;
+    const h = parseFloat(state.h.toString()) || 0;
     const volWeight = (l * b * h) / 5000;
     setOrderField('volumentricWeight', volWeight.toString());
   }, [state.b, state.l, state.h]);
@@ -93,7 +91,8 @@ const ProductDetailsScreen = ({
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={!open1}>
             <View style={styles.formSection}>
               <Text style={styles.heading}>Product Details</Text>
               <View>
@@ -106,7 +105,7 @@ const ProductDetailsScreen = ({
                   setOpen={setOpen1}
                   items={myProduct.map(item => ({
                     label: item.productName,
-                    value: item.id,
+                    value: item.productName,
                     categoryName: item.categoryName,
                     productPrice: item.productPrice,
                     tax: item.tax,
@@ -140,10 +139,12 @@ const ProductDetailsScreen = ({
                       e.actualWeight?.toString() ?? '',
                     );
                   }}
-                  setItems={() => {}}
                   placeholder="Select Product"
                   style={styles.dropdown}
-                  dropDownContainerStyle={styles.dropdownContainer}
+                  dropDownContainerStyle={[
+                    styles.dropdownContainer,
+                    {maxHeight: 300},
+                  ]}
                 />
                 {errors.productName && (
                   <CustomText
@@ -204,8 +205,8 @@ const ProductDetailsScreen = ({
                 keyboardType="number-pad"
                 placeholder="Type here"
                 onChangeText={text => setOrderField('productPrice', text)}
-                value={state.productPrice}
-                defaultValue={state.productPrice}
+                value={state.productPrice.toString()}
+                defaultValue={state.productPrice.toString()}
                 errorMessage={errors.productPrice}
                 placeholderTextColor="#ccc"
                 leftIcon={
@@ -227,8 +228,8 @@ const ProductDetailsScreen = ({
                 keyboardType="default"
                 placeholder="Type here"
                 onChangeText={text => setOrderField('totalTaxes', text)}
-                value={state.totalTaxes}
-                defaultValue={state.totalTaxes}
+                value={state.totalTaxes.toString()}
+                defaultValue={state.totalTaxes.toString()}
                 errorMessage={errors.totalTaxes}
                 placeholderTextColor="#ccc"
                 leftIcon={
@@ -318,8 +319,8 @@ const ProductDetailsScreen = ({
                 keyboardType="number-pad"
                 placeholder="Type here"
                 onChangeText={text => setOrderField('actualWeight', text)}
-                value={state.actualWeight}
-                defaultValue={state.actualWeight}
+                value={state.actualWeight.toString()}
+                defaultValue={state.actualWeight.toString()}
                 errorMessage={errors.actualWeight}
                 placeholderTextColor="#ccc"
                 leftIcon={
@@ -343,7 +344,8 @@ const ProductDetailsScreen = ({
                     style={styles.inputDim}
                     placeholder="L"
                     keyboardType="numeric"
-                    value={state.l}
+                    value={state.l.toString()}
+                    defaultValue={state.l.toString()}
                     onChangeText={text => setOrderField('l', text)}
                     placeholderTextColor="#ccc"
                     returnKeyType="next"
@@ -356,7 +358,8 @@ const ProductDetailsScreen = ({
                     style={styles.inputDim}
                     placeholder="B"
                     keyboardType="numeric"
-                    value={state.b}
+                    value={state.b.toString()}
+                    defaultValue={state.b.toString()}
                     onChangeText={text => setOrderField('b', text)}
                     placeholderTextColor="#ccc"
                     returnKeyType="next"
@@ -369,7 +372,8 @@ const ProductDetailsScreen = ({
                     style={styles.inputDim}
                     placeholder="H"
                     keyboardType="numeric"
-                    value={state.h}
+                    value={state.h.toString()}
+                    defaultValue={state.h.toString()}
                     onChangeText={text => setOrderField('h', text)}
                     placeholderTextColor="#ccc"
                     returnKeyType="done"
@@ -402,7 +406,10 @@ const ProductDetailsScreen = ({
                 <Text style={styles.total}>{state.volumentricWeight}</Text>
               </View>
 
-              <CustomButton title="Create" onPress={handleToCreateBooking} />
+              <CustomButton
+                title={type === 'create' ? 'Create' : 'Edit'}
+                onPress={handleToCreateBooking}
+              />
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>

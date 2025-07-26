@@ -4,6 +4,7 @@ export {
   CreateOrderScreen,
   DropingDetailsScreen,
   ProductDetailsScreen,
+  EditOrderScreen,
 } from './CreateOrder';
 export {
   ProfileScreen,
