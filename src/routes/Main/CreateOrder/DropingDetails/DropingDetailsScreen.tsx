@@ -44,11 +44,12 @@ const DropingDetailsScreen = (props: Props) => {
           extraScrollHeight={Platform.OS === 'ios' ? 0 : headerHeight + 80}
           enableOnAndroid={true}
           showsVerticalScrollIndicator={false}
-          automaticallyAdjustKeyboardInsets>
+          automaticallyAdjustKeyboardInsets
+          keyboardDismissMode="none">
           <View style={styles.formSection}>
-            <Text style={styles.heading}>Drop Details</Text>
+            {/* <Text style={styles.heading}>Drop Details</Text> */}
             <CustomTextInput
-              label="Full Name"
+              label="Full Name *"
               inputMode="text"
               keyboardType="default"
               placeholder="Type here"
@@ -93,7 +94,7 @@ const DropingDetailsScreen = (props: Props) => {
 
             <CustomTextInput
               ref={dropMobileRef}
-              label="Mobile"
+              label="Mobile *"
               inputMode="numeric"
               keyboardType="number-pad"
               placeholder="Type here"
@@ -125,7 +126,11 @@ const DropingDetailsScreen = (props: Props) => {
 
             <CustomTextInput
               ref={dropAddressRef}
-              label="Address"
+              label="Address *"
+              textAlign="left"
+              allowFontScaling={true}
+              lineBreakModeIOS="tail"
+              lineBreakStrategyIOS="none"
               inputMode="text"
               keyboardType="default"
               placeholder="Type here"
@@ -148,7 +153,7 @@ const DropingDetailsScreen = (props: Props) => {
 
             <CustomTextInput
               ref={dropPincodeRef}
-              label="Pin Code"
+              label="Pin Code *"
               inputMode="numeric"
               keyboardType="number-pad"
               maxLength={6}
@@ -172,7 +177,7 @@ const DropingDetailsScreen = (props: Props) => {
             />
 
             <CustomTextInput
-              label="City"
+              label="City *"
               readOnly
               placeholder="City..."
               value={state.dropCity}
@@ -189,7 +194,7 @@ const DropingDetailsScreen = (props: Props) => {
               placeholderTextColor="#ccc"
             />
             <CustomTextInput
-              label="State"
+              label="State *"
               readOnly
               placeholder="State..."
               value={state.dropState}
@@ -240,12 +245,7 @@ const DropingDetailsScreen = (props: Props) => {
               errorMessage={errors.referenceNumber}
               placeholderTextColor="#ccc"
               leftIcon={
-                <CustomIcons
-                  type="Entypo"
-                  name="address"
-                  size={20}
-                  color="gray"
-                />
+                <CustomIcons type="Entypo" name="book" size={20} color="gray" />
               }
               returnKeyType="send"
               onSubmitEditing={handleToDroping}

@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useRTOStore} from '../../store';
 import {DashboardApi, fetchFilterData} from '../../networking';
 import {exportExcel, formatDate, showToast} from '../../utils';
 import {DateType} from 'react-native-ui-datepicker';
+import {debounce} from 'lodash';
 
 const useDashboardRTOService = () => {
   const {
@@ -21,6 +22,7 @@ const useDashboardRTOService = () => {
     refreshRTO: false,
     loadMoreRTO: false,
   });
+  const [excelLoading, setExcelLoading] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [selectedTab, setSelectedTab] = useState<
     'In Transit' | 'Dispatched' | 'Delivered'
@@ -78,10 +80,18 @@ const useDashboardRTOService = () => {
     await getRTODetailsList(0, true, false);
   };
   const moreLoad = async () => {
+    if (loading.loadMoreRTO) return;
+
     if (Number(currentPage) < Number(totalPages)) {
       await getRTODetailsList(currentPage, false, true);
     }
   };
+
+  const debouncedLoadMore = useCallback(debounce(moreLoad, 300), [
+    currentPage,
+    totalPages,
+    loading.loadMoreRTO,
+  ]);
 
   const toggleDropdown = () => setShowStatusDropdown(prev => !prev);
 
@@ -91,6 +101,7 @@ const useDashboardRTOService = () => {
         showToast('Please select both a start and end date to continue.');
         return;
       }
+      setExcelLoading(true);
       const body = {
         day: 0,
         fromDate: formatDate(dateRange.fromDate) ?? '',
@@ -112,9 +123,12 @@ const useDashboardRTOService = () => {
       }
 
       await exportExcel(excelData.data.content || [], 'rto');
+      setIsDatePickerVisible(false);
     } catch (error) {
       console.error('Excel export failed:', error);
       showToast('Failed to export data. Please try again.');
+    } finally {
+      setExcelLoading(false);
     }
   };
 
@@ -135,6 +149,8 @@ const useDashboardRTOService = () => {
     setIsDatePickerVisible,
     dateRange,
     setDateRange,
+    excelLoading,
+    debouncedLoadMore,
   };
 };
 

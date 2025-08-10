@@ -85,8 +85,6 @@ const EditOrderScreen = ({
     'VirtualizedLists should never be nested', // 👈 Not recommended unless absolutely necessary
   ]);
 
-  console.log('type', type);
-
   return (
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

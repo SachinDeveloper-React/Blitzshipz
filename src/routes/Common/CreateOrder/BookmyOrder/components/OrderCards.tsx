@@ -43,7 +43,11 @@ const OrderCard: React.FC<Props> = ({
     <Pressable
       style={[
         styles.card,
-        isSelected && {borderWidth: 2, borderColor: '#1976d2'},
+        isSelected && {
+          borderWidth: 0.5,
+          borderColor: '#05012E',
+          backgroundColor: '#D2D1D9',
+        },
       ]}
       onLongPress={onSelect}
       onPress={() => onPress(item)}>
@@ -54,7 +58,7 @@ const OrderCard: React.FC<Props> = ({
             <Icon name="edit" size={20} color="#007AFF" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onPay(item.id)}>
-            <Icon name="payment" size={20} color="#34C759" />
+            <Icon name="currency-rupee" size={20} color="#34C759" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onDelete(item.id)}>
             <Icon name="delete" size={20} color="#FF3B30" />

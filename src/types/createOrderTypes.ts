@@ -135,3 +135,31 @@ export interface SellerStore {
   setSellerLoading: (loading: boolean) => void;
   setSellerError: (error: string) => void;
 }
+
+type PaginationState = {
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  totalItems: number;
+};
+
+export interface PrintLabelStore {
+  orders: CreateOrderState[] | [];
+  loading: {
+    refreshLoading: boolean;
+    loadMoreLoading: boolean;
+    loading: boolean;
+  };
+  error: string | null;
+  pagination: PaginationState;
+  setOrder: (order: CreateOrderState[]) => void;
+  appendOrder: (order: CreateOrderState[]) => void;
+  removeOrder: (orderId: string) => void;
+  clearOrders: () => void;
+  setLoading: (
+    key: 'refreshLoading' | 'loadMoreLoading' | 'loading',
+    value: boolean,
+  ) => void;
+  setError: (error: string | null) => void;
+  setPagination: (pagination: Partial<PaginationState>) => void;
+}

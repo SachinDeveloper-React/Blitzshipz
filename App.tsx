@@ -138,7 +138,7 @@ import {
   Vibration,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppNavigationContainer} from './src/navigation';
 
@@ -149,6 +149,7 @@ const App = (props: Props) => {
     Vibration.vibrate(10);
     Keyboard.dismiss();
   };
+
   return (
     <SafeAreaProvider>
       <TouchableWithoutFeedback onPress={handleGlobalTouch}>

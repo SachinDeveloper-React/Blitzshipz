@@ -57,7 +57,6 @@ const useProfileService = (props: Props) => {
     try {
       if (!user) return;
       const response = await ProfileApi.getProfileDocs();
-      console.log('response', response);
 
       if (response.code === 200) {
         setUserProfileDocData(response.data);

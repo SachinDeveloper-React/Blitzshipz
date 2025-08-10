@@ -19,6 +19,7 @@ const useDashboardNDRService = () => {
     ndr: true,
     refreshNdr: false,
   });
+  const [excelLoading, setExcelLoading] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [dateRange, setDateRange] = useState<{
     toDate: DateType | null;
@@ -92,6 +93,8 @@ const useDashboardNDRService = () => {
         showToast('Please select both a start and end date to continue.');
         return;
       }
+
+      setExcelLoading(true);
       const body = {
         day: 0,
         fromDate: formatDate(dateRange.fromDate) ?? '',
@@ -113,9 +116,12 @@ const useDashboardNDRService = () => {
       }
 
       await exportExcel(excelData.data.content || [], 'ndr');
+      setIsDatePickerVisible(false);
     } catch (error) {
       console.error('Excel export failed:', error);
       showToast('Failed to export data. Please try again.');
+    } finally {
+      setExcelLoading(false);
     }
   };
 
@@ -160,6 +166,7 @@ const useDashboardNDRService = () => {
     setDateRange,
     searchText,
     setSearchText,
+    excelLoading,
   };
 };
 

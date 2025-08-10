@@ -84,7 +84,6 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
   const handleImage = async () => {
     const result = await openGalleryImage();
     if (result) {
-      console.log('result', result);
       const uri = result.uri;
       if (uri) {
         uploadProfileImage(result);
@@ -97,7 +96,6 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
     );
   }
 
-  console.log('userProfileDoc', userProfileDoc);
   return (
     <ScrollView
       style={styles.container}

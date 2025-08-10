@@ -31,4 +31,5 @@ export {
   useCreateOrderStore,
   useWarehouseStore,
   useSellerStore,
+  usePrintLabelStore,
 } from './createOrderStore';

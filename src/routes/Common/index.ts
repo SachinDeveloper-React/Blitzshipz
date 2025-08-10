@@ -11,4 +11,9 @@ export {RateCalculatorScreen} from './RateCalculator';
 export {BalanceScreen} from './Fund';
 export {WarehouseScreen} from './Warehouse';
 export {SellerScreen} from './Seller';
-export {BookmyOrderScreen, RateScreen, OrderDetailsScreen} from './CreateOrder';
+export {
+  BookmyOrderScreen,
+  RateScreen,
+  OrderDetailsScreen,
+  PrintLabelScreen,
+} from './CreateOrder';

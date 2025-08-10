@@ -7,9 +7,19 @@ type Props = {
   order: NDROrder;
   onPress: () => void;
   onLongPress?: () => void;
+  isSelected?: boolean;
+  onSelect?: (id: string) => void;
+  index?: number;
 };
 
-const CustomCard: React.FC<Props> = ({order, onPress, onLongPress}) => {
+const CustomCard: React.FC<Props> = ({
+  order,
+  onPress,
+  onLongPress,
+  isSelected,
+  onSelect,
+  index,
+}) => {
   const formattedDate = new Date(
     order?.statusDateTime ?? '',
   ).toLocaleDateString('en-IN', {
@@ -24,7 +34,15 @@ const CustomCard: React.FC<Props> = ({order, onPress, onLongPress}) => {
     <TouchableOpacity
       onPress={onPress}
       onLongPress={onLongPress}
-      style={styles.card}>
+      activeOpacity={0.8}
+      style={[
+        styles.card,
+        isSelected && {
+          borderWidth: 0.5,
+          borderColor: '#05012E',
+          backgroundColor: '#D2D1D9',
+        },
+      ]}>
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
           <Text style={styles.waybill}>#{order.waybill}</Text>
@@ -35,6 +53,9 @@ const CustomCard: React.FC<Props> = ({order, onPress, onLongPress}) => {
         <VendorIcons vendorCode={order.vendorCode ?? ''} />
       </View>
 
+      <Text style={styles.orderId}>
+        Reference Number: {order.referenceNumber || '--'}
+      </Text>
       <Text style={styles.orderId}>Order ID: {order.orderId}</Text>
       <Text style={styles.name}>{order.dropName}</Text>
       <Text style={styles.city}>

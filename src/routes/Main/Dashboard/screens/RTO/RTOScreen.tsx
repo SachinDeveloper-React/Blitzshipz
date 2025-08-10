@@ -11,7 +11,6 @@ import React, {useState} from 'react';
 import {useDashboardRTOService} from '../../../../../services';
 import {CustomDatePickerModal, CustomText} from '../../../../../components';
 import {OrderList} from '../Orders/components';
-import {formatDate} from '../../../../../utils';
 import {moderateScale} from 'react-native-size-matters';
 
 type Props = {};
@@ -33,6 +32,8 @@ const RTOScreen = (props: Props) => {
     isDatePickerVisible,
     setDateRange,
     setIsDatePickerVisible,
+    excelLoading,
+    debouncedLoadMore,
   } = useDashboardRTOService();
 
   return (
@@ -41,90 +42,62 @@ const RTOScreen = (props: Props) => {
       onPress={() => setShowStatusDropdown(false)}>
       <View style={styles.header}>
         <CustomText style={styles.title}>
-          {selectedTab} {totalElements || 0}
+          {rtoData.length > 0 ? selectedTab : 'Order List'}{' '}
+          {totalElements || ''}
         </CustomText>
 
-        <TouchableOpacity onPress={toggleDropdown}>
-          <CustomText style={styles.filterToggle}>{selectedTab} ▾</CustomText>
-        </TouchableOpacity>
-        {showStatusDropdown && (
-          <Pressable
-            style={styles.dropdown}
-            onStartShouldSetResponder={() => true}
-            onTouchEnd={e => e.stopPropagation()}>
-            <CustomText
-              style={{paddingVertical: 10}}
-              onPress={() => {
-                setSelectedTab('In Transit');
-                setShowStatusDropdown(false);
-              }}>
-              In Transit
-            </CustomText>
-            <CustomText
-              style={{paddingVertical: 10}}
-              onPress={() => {
-                setSelectedTab('Dispatched');
-                setShowStatusDropdown(false);
-              }}>
-              Dispatched
-            </CustomText>
-            <CustomText
-              style={{paddingVertical: 10}}
-              onPress={() => {
-                setSelectedTab('Delivered');
-                setShowStatusDropdown(false);
-              }}>
-              Delivered
-            </CustomText>
-          </Pressable>
-        )}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity onPress={() => setIsDatePickerVisible(true)}>
+            <Image
+              source={require('../../../../../assets/excelImage.png')}
+              style={{width: 50, height: 50}}
+              resizeMethod="scale"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={toggleDropdown}>
+            <CustomText style={styles.filterToggle}>{selectedTab} ▾</CustomText>
+          </TouchableOpacity>
+          {showStatusDropdown && (
+            <Pressable
+              style={styles.dropdown}
+              onStartShouldSetResponder={() => true}
+              onTouchEnd={e => e.stopPropagation()}>
+              <CustomText
+                style={{paddingVertical: 10}}
+                onPress={() => {
+                  setSelectedTab('In Transit');
+                  setShowStatusDropdown(false);
+                }}>
+                In Transit
+              </CustomText>
+              <CustomText
+                style={{paddingVertical: 10}}
+                onPress={() => {
+                  setSelectedTab('Dispatched');
+                  setShowStatusDropdown(false);
+                }}>
+                Dispatched
+              </CustomText>
+              <CustomText
+                style={{paddingVertical: 10}}
+                onPress={() => {
+                  setSelectedTab('Delivered');
+                  setShowStatusDropdown(false);
+                }}>
+                Delivered
+              </CustomText>
+            </Pressable>
+          )}
+        </View>
       </View>
 
-      <View
-        style={{
-          paddingHorizontal: 16,
-          borderBottomWidth: 1,
-          borderBottomColor: '#ccc',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <View>
-          <TouchableOpacity
-            style={styles.dateContainer}
-            onPress={() => setIsDatePickerVisible(true)}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-              <Text style={styles.dateText}>
-                {formatDate(dateRange.fromDate as any) || 'Select From Date'}
-              </Text>
-              <Text style={styles.dateText}>-</Text>
-              <Text style={styles.dateText}>
-                {formatDate(dateRange.toDate as any) || 'Select To Date'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <CustomDatePickerModal
-            visible={isDatePickerVisible}
-            onClose={() => setIsDatePickerVisible(false)}
-            date={dateRange}
-            onSelect={(startDate, endDate) => {
-              setDateRange({
-                fromDate: startDate ? new Date(startDate as any) : null,
-                toDate: endDate ? new Date(endDate as any) : null,
-              });
-            }}
-            title="Pick Order Date"
-          />
-        </View>
-        <TouchableOpacity onPress={exportExcelSheet}>
-          <Image
-            source={require('../../../../../assets/excelImage.png')}
-            style={{width: 60, height: 60}}
-            resizeMethod="scale"
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </View>
       {loading.rto ? (
         <ActivityIndicator size="large" style={styles.loader} />
       ) : (
@@ -132,9 +105,29 @@ const RTOScreen = (props: Props) => {
           orders={rtoData as any}
           onRefresh={onRefresh}
           refresh={loading.refreshRTO}
-          onLoad={moreLoad}
+          onLoad={debouncedLoadMore}
+          ListFooterComponent={() => {
+            if (loading.loadMoreRTO) {
+              return <ActivityIndicator size="small" />;
+            }
+          }}
         />
       )}
+
+      <CustomDatePickerModal
+        visible={isDatePickerVisible}
+        onClose={() => setIsDatePickerVisible(false)}
+        date={dateRange}
+        onSelect={(startDate, endDate) => {
+          setDateRange({
+            fromDate: startDate ? new Date(startDate as any) : null,
+            toDate: endDate ? new Date(endDate as any) : null,
+          });
+        }}
+        title="Pick Order Date"
+        onSubmit={exportExcelSheet}
+        loading={excelLoading}
+      />
     </Pressable>
   );
 };
@@ -147,7 +140,7 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'relative',
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',

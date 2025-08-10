@@ -6,11 +6,6 @@ import {
   RefreshControl,
   Dimensions,
 } from 'react-native';
-import {CustomCard, CustomText} from '../../../../../../components';
-import {navigate} from '../../../../../../navigation';
-import LottieView from 'lottie-react-native';
-import {NotFound} from '../../../../../../layout';
-import {RaisedTicketModal} from '../../../../../Settings/Support';
 import CustomListing from '../../../../../../components/CustomListing';
 
 type OrderItem = {
@@ -63,9 +58,16 @@ type Props = {
   refresh: boolean;
   onRefresh: () => void;
   onLoad: () => void;
+  ListFooterComponent?: any;
 };
 
-const OrderList: React.FC<Props> = ({orders, onRefresh, refresh, onLoad}) => {
+const OrderList: React.FC<Props> = ({
+  orders,
+  onRefresh,
+  refresh,
+  onLoad,
+  ListFooterComponent,
+}) => {
   return (
     <View style={styles.container}>
       <CustomListing
@@ -75,6 +77,7 @@ const OrderList: React.FC<Props> = ({orders, onRefresh, refresh, onLoad}) => {
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
+        ListFooterComponent={ListFooterComponent}
       />
     </View>
   );

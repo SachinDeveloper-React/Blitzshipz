@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewStyle,
 } from 'react-native';
 import React, {useState} from 'react';
 import {NotFound} from '../layout';
@@ -19,10 +20,12 @@ type Props = {
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
   refreshControl?: any;
+  ListFooterComponent?: any;
+  ListFooterComponentStyle?: ViewStyle;
 };
 
 const CustomListing = (props: Props) => {
-  const {data} = props;
+  const {data, ListFooterComponent, ListFooterComponentStyle} = props;
   const [raisedTicket, setRaisedTicket] = useState(false);
   const [selectedAWBId, setSelectedAWBId] = useState<string>('');
 
@@ -31,9 +34,16 @@ const CustomListing = (props: Props) => {
     setSelectedAWBId(id);
   };
 
-  const renderItem = ({item}: {item: NDROrder | OrderItem | any}) => {
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: NDROrder | OrderItem | any;
+    index: number;
+  }) => {
     return (
       <CustomCard
+        index={index}
         order={item}
         onLongPress={() => toggleRaisedModel(String(item.waybill))}
         onPress={() =>
@@ -61,6 +71,8 @@ const CustomListing = (props: Props) => {
         showsVerticalScrollIndicator={false}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={<NotFound title="No data found" />}
+        ListFooterComponent={ListFooterComponent}
+        ListFooterComponentStyle={ListFooterComponentStyle}
       />
       <RaisedTicketModal
         awb={selectedAWBId}
@@ -76,5 +88,6 @@ export default CustomListing;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    paddingBottom: 60,
   },
 });

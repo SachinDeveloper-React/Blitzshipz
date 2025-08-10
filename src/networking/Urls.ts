@@ -1,5 +1,6 @@
 const isProduction = true;
-export const BASE_URL = isProduction ? 'https://backend.Blitzshipz.com' : '';
+export const BASE_URL = isProduction ? 'https://backend.blitzshipz.com' : '';
+// export const BASE_URL = isProduction ? 'https://backend.Blitzshipz.com' : '';
 export const URLS = {
   AUTH: {
     LOGIN: '/user/auth/login',

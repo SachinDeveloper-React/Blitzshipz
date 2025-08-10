@@ -147,7 +147,6 @@ const useAuthService = () => {
         roles: ['admin'],
       });
 
-      console.log('response', response);
       if (response.code === 200) {
         if (response.data.statusCode === 200) {
           goBack();

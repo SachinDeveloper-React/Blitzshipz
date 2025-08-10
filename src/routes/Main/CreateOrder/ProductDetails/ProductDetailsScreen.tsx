@@ -27,6 +27,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {navigate, RootStackParamList} from '../../../../navigation';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ProductDetailsScreen = ({
   navigation,
@@ -38,6 +39,7 @@ const ProductDetailsScreen = ({
     headerHeight,
     setOrderField,
     handleToCreateBooking,
+    createOrderLoading,
   } = useCreateOrderService();
   const {myProduct, fetchData} = useProfileMyProductService();
 
@@ -83,8 +85,8 @@ const ProductDetailsScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.flex}
         keyboardVerticalOffset={headerHeight}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -92,328 +94,331 @@ const ProductDetailsScreen = ({
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
-            scrollEnabled={!open1}>
-            <View style={styles.formSection}>
-              <Text style={styles.heading}>Product Details</Text>
-              <View>
-                <Text style={styles.label}>Select Product</Text>
-                <DropDownPicker
-                  listMode="FLATLIST"
-                  open={open1}
-                  value={value1}
-                  setValue={setValue1}
-                  setOpen={setOpen1}
-                  items={myProduct.map(item => ({
-                    label: item.productName,
-                    value: item.productName,
-                    categoryName: item.categoryName,
-                    productPrice: item.productPrice,
-                    tax: item.tax,
-                    volume: item.volume,
-                    l: item.l,
-                    h: item.h,
-                    b: item.b,
-                    totalPrice: item.totalPrice,
-                    actualWeight: item.weight,
-                  }))}
-                  onSelectItem={(e: any) => {
-                    setOrderField('productName', e.label?.toString() ?? '');
-                    setOrderField(
-                      'productCategory',
-                      e.categoryName?.toString() ?? '',
-                    );
-                    setOrderField(
-                      'productPrice',
-                      e.productPrice?.toString() ?? '',
-                    );
-                    setOrderField('totalTaxes', e.tax?.toString() ?? '');
-                    setOrderField('l', e.l?.toString() ?? '');
-                    setOrderField('b', e.b?.toString() ?? '');
-                    setOrderField('h', e.h?.toString() ?? '');
-                    setOrderField(
-                      'totalAmount',
-                      e.totalPrice?.toString() ?? '',
-                    );
-                    setOrderField(
-                      'actualWeight',
-                      e.actualWeight?.toString() ?? '',
-                    );
-                  }}
-                  placeholder="Select Product"
-                  style={styles.dropdown}
-                  dropDownContainerStyle={[
-                    styles.dropdownContainer,
-                    {maxHeight: 300},
-                  ]}
+            scrollEnabled={!open1}> */}
+
+      <KeyboardAwareScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={Platform.OS === 'ios' ? 0 : headerHeight + 80}
+        enableOnAndroid={true}
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="none">
+        <View style={styles.formSection}>
+          <Text style={styles.heading}>Product Details</Text>
+          <View>
+            <Text style={styles.label}>Select Product *</Text>
+            <DropDownPicker
+              listMode="FLATLIST"
+              open={open1}
+              value={value1}
+              setValue={setValue1}
+              setOpen={setOpen1}
+              items={myProduct.map(item => ({
+                label: item.productName,
+                value: item.productName,
+                categoryName: item.categoryName,
+                productPrice: item.productPrice,
+                tax: item.tax,
+                volume: item.volume,
+                l: item.l,
+                h: item.h,
+                b: item.b,
+                totalPrice: item.totalPrice,
+                actualWeight: item.weight,
+              }))}
+              onSelectItem={(e: any) => {
+                setOrderField('productName', e.label?.toString() ?? '');
+                setOrderField(
+                  'productCategory',
+                  e.categoryName?.toString() ?? '',
+                );
+                setOrderField('productPrice', e.productPrice?.toString() ?? '');
+                setOrderField('totalTaxes', e.tax?.toString() ?? '');
+                setOrderField('l', e.l?.toString() ?? '');
+                setOrderField('b', e.b?.toString() ?? '');
+                setOrderField('h', e.h?.toString() ?? '');
+                setOrderField('totalAmount', e.totalPrice?.toString() ?? '');
+                setOrderField('actualWeight', e.actualWeight?.toString() ?? '');
+              }}
+              placeholder="Select Product"
+              style={styles.dropdown}
+              dropDownContainerStyle={[
+                styles.dropdownContainer,
+                {maxHeight: 300},
+              ]}
+            />
+            {errors.productName && (
+              <CustomText
+                variant="caption"
+                style={{color: 'red', marginTop: 5}}>
+                {errors.productName}
+              </CustomText>
+            )}
+          </View>
+          <CustomTextInput
+            label="Category *"
+            inputMode="text"
+            keyboardType="default"
+            placeholder="Type here"
+            placeholderTextColor="#ccc"
+            onChangeText={text => setOrderField('productCategory', text)}
+            value={state.productCategory}
+            defaultValue={state.productCategory}
+            errorMessage={errors.productCategory}
+            disabled
+            editable={false}
+            leftIcon={
+              <CustomIcons
+                type="MaterialIcons"
+                name="category"
+                size={20}
+                color="gray"
+              />
+            }
+          />
+
+          <CustomTextInput
+            ref={quantityRef}
+            label="Quantity"
+            inputMode="numeric"
+            keyboardType="number-pad"
+            onChangeText={text => setOrderField('productQuantity', text)}
+            value={state.productQuantity.toString()}
+            defaultValue={state.productQuantity.toString()}
+            errorMessage={errors.productQuantity}
+            placeholderTextColor="#ccc"
+            leftIcon={
+              <CustomIcons
+                type="MaterialIcons"
+                name="numbers"
+                size={20}
+                color="gray"
+              />
+            }
+            returnKeyType="next"
+            onSubmitEditing={() => priceRef.current?.focus()}
+          />
+
+          <CustomTextInput
+            ref={priceRef}
+            label="Price *"
+            inputMode="numeric"
+            keyboardType="number-pad"
+            placeholder="Type here"
+            onChangeText={text => setOrderField('productPrice', text)}
+            value={state.productPrice.toString()}
+            defaultValue={state.productPrice.toString()}
+            errorMessage={errors.productPrice}
+            placeholderTextColor="#ccc"
+            leftIcon={
+              <CustomIcons
+                type="MaterialIcons"
+                name="currency-rupee"
+                size={20}
+                color="gray"
+              />
+            }
+            returnKeyType="next"
+            onSubmitEditing={() => taxesRef.current?.focus()}
+          />
+
+          <CustomTextInput
+            ref={taxesRef}
+            label="Taxes *"
+            inputMode="text"
+            keyboardType="default"
+            placeholder="Type here"
+            onChangeText={text => setOrderField('totalTaxes', text)}
+            value={state.totalTaxes.toString()}
+            defaultValue={state.totalTaxes.toString()}
+            errorMessage={errors.totalTaxes}
+            placeholderTextColor="#ccc"
+            leftIcon={
+              <CustomIcons
+                type="Entypo"
+                name="address"
+                size={20}
+                color="gray"
+              />
+            }
+            returnKeyType="next"
+            onSubmitEditing={() => weightRef.current?.focus()}
+          />
+
+          <View style={styles.checkboxRow}>
+            <View style={styles.checkboxOption}>
+              <TouchableOpacity
+                onPress={() => setOrderField('fragile', !state.fragile)}
+                style={[
+                  styles.checkbox,
+                  state.fragile && styles.checkboxSelected,
+                ]}>
+                <CustomIcons
+                  name="checkmark"
+                  type="Ionicons"
+                  size={15}
+                  color="#fff"
                 />
-                {errors.productName && (
-                  <CustomText
-                    variant="caption"
-                    style={{color: 'red', marginTop: 5}}>
-                    {errors.productName}
-                  </CustomText>
-                )}
-              </View>
-              <CustomTextInput
-                label="Category"
-                inputMode="text"
-                keyboardType="default"
-                placeholder="Type here"
-                placeholderTextColor="#ccc"
-                onChangeText={text => setOrderField('productCategory', text)}
-                value={state.productCategory}
-                defaultValue={state.productCategory}
-                errorMessage={errors.productCategory}
-                disabled
-                editable={false}
-                leftIcon={
-                  <CustomIcons
-                    type="MaterialIcons"
-                    name="category"
-                    size={20}
-                    color="gray"
-                  />
-                }
-              />
+              </TouchableOpacity>
+              <CustomText>Fragile Product</CustomText>
+            </View>
+          </View>
 
-              <CustomTextInput
-                ref={quantityRef}
-                label="Quantity"
+          <Text style={styles.heading}>Payment Mode:</Text>
+          <View style={styles.checkboxGroup}>
+            <View style={styles.checkboxRow}>
+              <View style={styles.checkboxOption}>
+                <TouchableOpacity
+                  onPress={() => setOrderField('paymentMode', 'COD')}
+                  style={[
+                    styles.checkbox,
+                    state.paymentMode === 'COD' && styles.checkboxSelected,
+                  ]}>
+                  <CustomIcons
+                    name="checkmark"
+                    type="Ionicons"
+                    size={15}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+                <CustomText>COD</CustomText>
+              </View>
+              <View style={styles.checkboxOption}>
+                <TouchableOpacity
+                  onPress={() => setOrderField('paymentMode', 'Prepaid')}
+                  style={[
+                    styles.checkbox,
+                    state.paymentMode === 'Prepaid' && styles.checkboxSelected,
+                  ]}>
+                  <CustomIcons
+                    name="checkmark"
+                    type="Ionicons"
+                    size={15}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+                <CustomText>Prepaid</CustomText>
+              </View>
+            </View>
+            {errors.paymentMode && (
+              <CustomText
+                variant="caption"
+                style={{color: 'red', marginTop: 5}}>
+                Payment Mode Required
+              </CustomText>
+            )}
+          </View>
+          <Text style={styles.heading}>Total Amount: {state.totalAmount}</Text>
+
+          <CustomTextInput
+            ref={weightRef}
+            label="Dead/Actual weight (kg) *"
+            inputMode="numeric"
+            keyboardType="number-pad"
+            placeholder="Type here"
+            onChangeText={text => setOrderField('actualWeight', text)}
+            value={state.actualWeight.toString()}
+            defaultValue={state.actualWeight.toString()}
+            errorMessage={errors.actualWeight}
+            placeholderTextColor="#ccc"
+            leftIcon={
+              <CustomIcons
+                type="Entypo"
+                name="address"
+                size={20}
+                color="gray"
+              />
+            }
+            returnKeyType="next"
+            onSubmitEditing={() => lRef.current?.focus()}
+          />
+
+          <Text style={styles.subHeading}>Dimensions (cm)</Text>
+          <View>
+            <View style={styles.dimensionRow}>
+              <TextInput
+                ref={lRef}
                 inputMode="numeric"
-                keyboardType="number-pad"
-                onChangeText={text => setOrderField('productQuantity', text)}
-                value={state.productQuantity.toString()}
-                defaultValue={state.productQuantity.toString()}
-                errorMessage={errors.productQuantity}
+                style={styles.inputDim}
+                placeholder="L *"
+                keyboardType="numeric"
+                value={state.l.toString()}
+                defaultValue={state.l.toString()}
+                onChangeText={text => setOrderField('l', text)}
                 placeholderTextColor="#ccc"
-                leftIcon={
-                  <CustomIcons
-                    type="MaterialIcons"
-                    name="numbers"
-                    size={20}
-                    color="gray"
-                  />
-                }
                 returnKeyType="next"
-                onSubmitEditing={() => priceRef.current?.focus()}
+                onSubmitEditing={() => bRef.current?.focus()}
               />
-
-              <CustomTextInput
-                ref={priceRef}
-                label="Price"
+              <Text style={styles.multiply}>×</Text>
+              <TextInput
+                ref={bRef}
                 inputMode="numeric"
-                keyboardType="number-pad"
-                placeholder="Type here"
-                onChangeText={text => setOrderField('productPrice', text)}
-                value={state.productPrice.toString()}
-                defaultValue={state.productPrice.toString()}
-                errorMessage={errors.productPrice}
+                style={styles.inputDim}
+                placeholder="B *"
+                keyboardType="numeric"
+                value={state.b.toString()}
+                defaultValue={state.b.toString()}
+                onChangeText={text => setOrderField('b', text)}
                 placeholderTextColor="#ccc"
-                leftIcon={
-                  <CustomIcons
-                    type="MaterialIcons"
-                    name="currency-rupee"
-                    size={20}
-                    color="gray"
-                  />
-                }
                 returnKeyType="next"
-                onSubmitEditing={() => taxesRef.current?.focus()}
+                returnKeyLabel="next"
+                onSubmitEditing={() => hRef.current?.focus()}
               />
-
-              <CustomTextInput
-                ref={taxesRef}
-                label="Taxes"
-                inputMode="text"
-                keyboardType="default"
-                placeholder="Type here"
-                onChangeText={text => setOrderField('totalTaxes', text)}
-                value={state.totalTaxes.toString()}
-                defaultValue={state.totalTaxes.toString()}
-                errorMessage={errors.totalTaxes}
-                placeholderTextColor="#ccc"
-                leftIcon={
-                  <CustomIcons
-                    type="Entypo"
-                    name="address"
-                    size={20}
-                    color="gray"
-                  />
-                }
-                returnKeyType="next"
-                onSubmitEditing={() => weightRef.current?.focus()}
-              />
-
-              <View style={styles.checkboxRow}>
-                <View style={styles.checkboxOption}>
-                  <TouchableOpacity
-                    onPress={() => setOrderField('fragile', !state.fragile)}
-                    style={[
-                      styles.checkbox,
-                      state.fragile && styles.checkboxSelected,
-                    ]}>
-                    <CustomIcons
-                      name="checkmark"
-                      type="Ionicons"
-                      size={15}
-                      color="#fff"
-                    />
-                  </TouchableOpacity>
-                  <CustomText>Fragile Product</CustomText>
-                </View>
-              </View>
-
-              <Text style={styles.heading}>Payment Mode:</Text>
-              <View style={styles.checkboxGroup}>
-                <View style={styles.checkboxRow}>
-                  <View style={styles.checkboxOption}>
-                    <TouchableOpacity
-                      onPress={() => setOrderField('paymentMode', 'COD')}
-                      style={[
-                        styles.checkbox,
-                        state.paymentMode === 'COD' && styles.checkboxSelected,
-                      ]}>
-                      <CustomIcons
-                        name="checkmark"
-                        type="Ionicons"
-                        size={15}
-                        color="#fff"
-                      />
-                    </TouchableOpacity>
-                    <CustomText>COD</CustomText>
-                  </View>
-                  <View style={styles.checkboxOption}>
-                    <TouchableOpacity
-                      onPress={() => setOrderField('paymentMode', 'Prepaid')}
-                      style={[
-                        styles.checkbox,
-                        state.paymentMode === 'Prepaid' &&
-                          styles.checkboxSelected,
-                      ]}>
-                      <CustomIcons
-                        name="checkmark"
-                        type="Ionicons"
-                        size={15}
-                        color="#fff"
-                      />
-                    </TouchableOpacity>
-                    <CustomText>Prepaid</CustomText>
-                  </View>
-                </View>
-                {errors.paymentMode && (
-                  <CustomText
-                    variant="caption"
-                    style={{color: 'red', marginTop: 5}}>
-                    Payment Mode Required
-                  </CustomText>
-                )}
-              </View>
-              <Text style={styles.heading}>
-                Total Amount: {state.totalAmount}
-              </Text>
-
-              <CustomTextInput
-                ref={weightRef}
-                label="Dead/Actual weight (kg)"
+              <Text style={styles.multiply}>×</Text>
+              <TextInput
+                ref={hRef}
                 inputMode="numeric"
-                keyboardType="number-pad"
-                placeholder="Type here"
-                onChangeText={text => setOrderField('actualWeight', text)}
-                value={state.actualWeight.toString()}
-                defaultValue={state.actualWeight.toString()}
-                errorMessage={errors.actualWeight}
+                style={styles.inputDim}
+                placeholder="H *"
+                keyboardType="numeric"
+                value={state.h.toString()}
+                defaultValue={state.h.toString()}
+                onChangeText={text => setOrderField('h', text)}
                 placeholderTextColor="#ccc"
-                leftIcon={
-                  <CustomIcons
-                    type="Entypo"
-                    name="address"
-                    size={20}
-                    color="gray"
-                  />
-                }
-                returnKeyType="next"
-                onSubmitEditing={() => lRef.current?.focus()}
-              />
-
-              <Text style={styles.subHeading}>Dimensions (cm)</Text>
-              <View>
-                <View style={styles.dimensionRow}>
-                  <TextInput
-                    ref={lRef}
-                    inputMode="numeric"
-                    style={styles.inputDim}
-                    placeholder="L"
-                    keyboardType="numeric"
-                    value={state.l.toString()}
-                    defaultValue={state.l.toString()}
-                    onChangeText={text => setOrderField('l', text)}
-                    placeholderTextColor="#ccc"
-                    returnKeyType="next"
-                    onSubmitEditing={() => bRef.current?.focus()}
-                  />
-                  <Text style={styles.multiply}>×</Text>
-                  <TextInput
-                    ref={bRef}
-                    inputMode="numeric"
-                    style={styles.inputDim}
-                    placeholder="B"
-                    keyboardType="numeric"
-                    value={state.b.toString()}
-                    defaultValue={state.b.toString()}
-                    onChangeText={text => setOrderField('b', text)}
-                    placeholderTextColor="#ccc"
-                    returnKeyType="next"
-                    onSubmitEditing={() => hRef.current?.focus()}
-                  />
-                  <Text style={styles.multiply}>×</Text>
-                  <TextInput
-                    ref={hRef}
-                    inputMode="numeric"
-                    style={styles.inputDim}
-                    placeholder="H"
-                    keyboardType="numeric"
-                    value={state.h.toString()}
-                    defaultValue={state.h.toString()}
-                    onChangeText={text => setOrderField('h', text)}
-                    placeholderTextColor="#ccc"
-                    returnKeyType="done"
-                  />
-                </View>
-                {errors.l && (
-                  <CustomText
-                    variant="caption"
-                    style={{color: 'red', marginTop: 5}}>
-                    {errors.l}
-                  </CustomText>
-                )}
-                {errors.b && (
-                  <CustomText
-                    variant="caption"
-                    style={{color: 'red', marginTop: 5}}>
-                    {errors.b}
-                  </CustomText>
-                )}
-                {errors.h && (
-                  <CustomText
-                    variant="caption"
-                    style={{color: 'red', marginTop: 5}}>
-                    {errors.h}
-                  </CustomText>
-                )}
-              </View>
-              <View style={styles.field}>
-                <Text style={styles.label}>Volumetric Weight (kg)</Text>
-                <Text style={styles.total}>{state.volumentricWeight}</Text>
-              </View>
-
-              <CustomButton
-                title={type === 'create' ? 'Create' : 'Edit'}
-                onPress={handleToCreateBooking}
+                returnKeyType="done"
+                returnKeyLabel="done"
               />
             </View>
-          </ScrollView>
+            {errors.l && (
+              <CustomText
+                variant="caption"
+                style={{color: 'red', marginTop: 5}}>
+                {errors.l}
+              </CustomText>
+            )}
+            {errors.b && (
+              <CustomText
+                variant="caption"
+                style={{color: 'red', marginTop: 5}}>
+                {errors.b}
+              </CustomText>
+            )}
+            {errors.h && (
+              <CustomText
+                variant="caption"
+                style={{color: 'red', marginTop: 5}}>
+                {errors.h}
+              </CustomText>
+            )}
+          </View>
+          <View style={styles.field}>
+            <Text style={styles.label}>Volumetric Weight (kg)</Text>
+            <Text style={styles.total}>{state.volumentricWeight}</Text>
+          </View>
+
+          <CustomButton
+            disabled={createOrderLoading}
+            loading={createOrderLoading}
+            title={type === 'create' ? 'Create' : 'Edit'}
+            onPress={handleToCreateBooking}
+          />
+        </View>
+      </KeyboardAwareScrollView>
+      {/* </ScrollView>
         </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };

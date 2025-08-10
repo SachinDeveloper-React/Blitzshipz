@@ -1,32 +1,45 @@
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import CustomText from './CustomText';
 
 type Props = {
   title: string;
   onPress: () => void;
+  loading?: boolean;
 };
 
-const ExcelHeader = ({onPress, title}: Props) => {
+const ExcelHeader = ({onPress, title, loading = false}: Props) => {
   return (
     <View style={styles.header}>
-      <CustomText variant="subtitle" style={{fontWeight: '600', fontSize: 16}}>
+      <CustomText
+        variant="subtitle"
+        style={{fontWeight: '600', fontSize: 16, marginLeft: 4}}>
         {title}
       </CustomText>
 
-      <TouchableOpacity
-        onPress={onPress}
-        style={{
-          padding: 6,
-          borderRadius: 8,
-        }}
-        activeOpacity={0.7}>
-        <Image
-          source={require('../assets/excelImage.png')}
-          style={{width: 60, height: 40}}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator style={{padding: 6}} size={30} />
+      ) : (
+        <TouchableOpacity
+          onPress={onPress}
+          style={{
+            padding: 6,
+            borderRadius: 8,
+          }}
+          activeOpacity={0.7}>
+          <Image
+            source={require('../assets/excelImage.png')}
+            style={{width: 40, height: 40}}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

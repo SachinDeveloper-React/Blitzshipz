@@ -134,7 +134,6 @@ const useWarehouseService = (props: Props) => {
           ? await WarehouseApi.createWareHouse(body)
           : await WarehouseApi.editWareHouse(body);
 
-      console.log('response', response);
       if (response.code === 200) {
         if (Platform.OS === 'android') {
           ToastAndroid.show(response.data.message, ToastAndroid.BOTTOM);

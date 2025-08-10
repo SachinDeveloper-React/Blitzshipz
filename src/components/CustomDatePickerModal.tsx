@@ -1,17 +1,26 @@
 import React from 'react';
-import {Modal, View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {
+  Modal,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import DateTimePicker, {DateType} from 'react-native-ui-datepicker';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  onSubmit: () => void;
   date: {
     fromDate: DateType;
     toDate: DateType;
   };
   onSelect: (startDate: DateType, endDate: DateType) => void;
   title?: string;
+  loading?: boolean;
 };
 
 const CustomDatePickerModal: React.FC<Props> = ({
@@ -20,6 +29,8 @@ const CustomDatePickerModal: React.FC<Props> = ({
   date,
   onSelect,
   title,
+  onSubmit,
+  loading = false,
 }) => {
   return (
     <Modal
@@ -37,6 +48,7 @@ const CustomDatePickerModal: React.FC<Props> = ({
             endDate={date.toDate}
             onChange={({startDate, endDate}) => onSelect(startDate, endDate)}
             maxDate={new Date()}
+            disabledDates={current => current! > new Date()}
             styles={{
               selected: {
                 backgroundColor: '#184ea3',
@@ -45,23 +57,35 @@ const CustomDatePickerModal: React.FC<Props> = ({
               selected_label: {
                 color: '#fff',
               },
+
               button_prev: {
                 color: '#000',
-                backgroundColor: 'blue',
                 tintColor: '#000',
                 borderRadius: 4,
               },
               button_next: {
                 color: '#000',
-                backgroundColor: 'blue',
                 tintColor: '#000',
                 borderRadius: 4,
+              },
+              disabled: {
+                backgroundColor: '#f0f0f0',
+              },
+              disabled_label: {
+                color: '#ccc',
               },
             }}
           />
 
-          <TouchableOpacity style={styles.doneButton} onPress={onClose}>
-            <Text style={styles.doneButtonText}>Done</Text>
+          <TouchableOpacity
+            style={styles.doneButton}
+            onPress={onSubmit}
+            disabled={loading}>
+            {loading ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Text style={styles.doneButtonText}>Done</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.clearButton}

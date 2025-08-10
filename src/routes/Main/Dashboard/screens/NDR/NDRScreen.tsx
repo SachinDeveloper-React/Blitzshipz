@@ -14,7 +14,6 @@ import {useDashboardNDRService} from '../../../../../services';
 import {NdrSummaryRow} from './components';
 import CustomListing from '../../../../../components/CustomListing';
 import {CustomDatePickerModal} from '../../../../../components';
-import {formatDate} from '../../../../../utils';
 import {moderateScale} from 'react-native-size-matters';
 import {Search, X} from 'lucide-react-native';
 
@@ -34,6 +33,7 @@ const NDRScreen = (props: Props) => {
     setIsDatePickerVisible,
     searchText,
     setSearchText,
+    excelLoading,
   } = useDashboardNDRService();
   const [selectableTab, setSelectableTab] = useState<
     'Total NDR' | 'Actionable' | 'Address Issue' | 'Auto NDR'
@@ -58,50 +58,7 @@ const NDRScreen = (props: Props) => {
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        {!searchActive ? (
-          <>
-            <View>
-              <TouchableOpacity
-                style={styles.dateContainer}
-                onPress={() => setIsDatePickerVisible(true)}>
-                <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-                  <Text style={styles.dateText}>
-                    {formatDate(dateRange.fromDate as any) ||
-                      'Select From Date'}
-                  </Text>
-                  <Text style={styles.dateText}>-</Text>
-                  <Text style={styles.dateText}>
-                    {formatDate(dateRange.toDate as any) || 'Select To Date'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <CustomDatePickerModal
-                visible={isDatePickerVisible}
-                onClose={() => setIsDatePickerVisible(false)}
-                date={dateRange}
-                onSelect={(startDate, endDate) => {
-                  setDateRange({
-                    fromDate: startDate ? new Date(startDate as any) : null,
-                    toDate: endDate ? new Date(endDate as any) : null,
-                  });
-                }}
-                title="Pick Order Date"
-              />
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Search onPress={() => setSearchActive(!searchActive)} />
-              <TouchableOpacity onPress={exportExcelSheet}>
-                <Image
-                  source={require('../../../../../assets/excelImage.png')}
-                  style={{width: 60, height: 60}}
-                  resizeMethod="scale"
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
+        {searchActive && (
           <>
             <TextInput
               placeholder="Search by Order ID or Waybill"
@@ -124,21 +81,44 @@ const NDRScreen = (props: Props) => {
       </View>
       <View>
         {statusNDR?.data && (
-          <NdrSummaryRow
-            data={statusNDR?.data}
-            activeTab={selectableTab}
-            // onPress={item => {
-            //   if (item.label !== 'Auto NDR') {
-            //     setSelectableTab(
-            //       item.label as
-            //         | 'Total NDR'
-            //         | 'Actionable'
-            //         | 'Address Issue'
-            //         | 'Auto NDR',
-            //     );
-            //   }
-            // }}
-          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <NdrSummaryRow
+              data={statusNDR?.data}
+              activeTab={selectableTab}
+              // onPress={item => {
+              //   if (item.label !== 'Auto NDR') {
+              //     setSelectableTab(
+              //       item.label as
+              //         | 'Total NDR'
+              //         | 'Actionable'
+              //         | 'Address Issue'
+              //         | 'Auto NDR',
+              //     );
+              //   }
+              // }}
+            />
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: 24,
+              }}>
+              <Search onPress={() => setSearchActive(!searchActive)} />
+              <TouchableOpacity onPress={() => setIsDatePickerVisible(true)}>
+                <Image
+                  source={require('../../../../../assets/excelImage.png')}
+                  style={{width: 60, height: 60}}
+                  resizeMethod="scale"
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
       </View>
 
@@ -150,6 +130,23 @@ const NDRScreen = (props: Props) => {
             onRefresh={onRefresh}
           />
         }
+      />
+
+      <CustomDatePickerModal
+        visible={isDatePickerVisible}
+        onClose={() => setIsDatePickerVisible(false)}
+        date={dateRange}
+        onSelect={(startDate, endDate) => {
+          setDateRange({
+            fromDate: startDate ? new Date(startDate as any) : null,
+            toDate: endDate ? new Date(endDate as any) : null,
+          });
+        }}
+        title="Pick Order Date"
+        onSubmit={() => {
+          exportExcelSheet();
+        }}
+        loading={excelLoading}
       />
     </SafeAreaView>
   );

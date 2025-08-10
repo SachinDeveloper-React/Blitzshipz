@@ -2,11 +2,10 @@ import {create} from 'zustand';
 import {
   CreateOrderState,
   CreateOrderStore,
+  PrintLabelStore,
   SellerStore,
   WarehouseStore,
 } from '../types';
-import {createJSONStorage, persist} from 'zustand/middleware';
-import {zustandMMKVStorage} from './storage';
 
 export const initialOrderState: CreateOrderState = {
   id: '',
@@ -233,4 +232,57 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
     const {sellers} = get();
     return sellers.find(seller => seller.id === id);
   },
+}));
+
+export const usePrintLabelStore = create<PrintLabelStore>((set, get) => ({
+  orders: [],
+  loading: {
+    refreshLoading: false,
+    loadMoreLoading: false,
+    loading: false,
+  },
+  error: null,
+  pagination: {
+    currentPage: 0,
+    totalPages: 0,
+    pageSize: 10,
+    totalItems: 0,
+  },
+  setOrder: order => set({orders: order}),
+
+  appendOrder: order => {
+    set(state => ({
+      orders: [...state.orders, ...order],
+    }));
+  },
+
+  removeOrder: orderId => {
+    set(state => ({
+      orders: state.orders.filter(order => order.orderId !== orderId),
+    }));
+  },
+
+  clearOrders: () => {
+    set({orders: []});
+  },
+
+  setLoading: (key, value) => {
+    set(state => ({
+      loading: {
+        ...state.loading,
+        [key]: value,
+      },
+    }));
+  },
+  setError: error => {
+    set({error});
+  },
+
+  setPagination: pagination =>
+    set(state => ({
+      pagination: {
+        ...state.pagination,
+        ...pagination,
+      },
+    })),
 }));

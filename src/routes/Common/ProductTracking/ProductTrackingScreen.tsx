@@ -14,6 +14,7 @@ import {ShipmentDetails, TrackingTimeline} from './components';
 import {useTrackingService} from '../../../services';
 import {CustomIcons} from '../../../components';
 import {RaisedTicketModal} from '../../Settings/Support';
+import {theme} from '../../../utils';
 
 const ProductTrackingScreen = ({
   navigation,
@@ -54,7 +55,10 @@ const ProductTrackingScreen = ({
 
   useEffect(() => {
     if (shipmentDetailsY !== null && data) {
-      scrollRef.current?.scrollTo({y: shipmentDetailsY, animated: true});
+      scrollRef.current?.scrollTo({
+        y: shipmentDetailsY - theme.dimensions.height * 0.2,
+        animated: true,
+      });
     }
   }, [shipmentDetailsY, data]);
 

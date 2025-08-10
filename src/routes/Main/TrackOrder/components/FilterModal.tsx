@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Modal,
   View,
@@ -10,14 +10,12 @@ import {
   Platform,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import {useTrackingOrderStore} from '../../../../store';
 import {CustomIcons, CustomText, CustomTextInput} from '../../../../components';
 import {TrackOrderState} from '../../../../store';
-import DateTimePicker, {useDefaultStyles} from 'react-native-ui-datepicker';
-import dayjs from 'dayjs';
-import {Calendar, X} from 'lucide-react-native';
+import {X} from 'lucide-react-native';
+import {DateType} from 'react-native-ui-datepicker';
 
 const today = new Date();
 const fiftyYearsAgo = new Date();
@@ -38,24 +36,14 @@ const FilterModal = ({
     productCategory?: string;
     referenceNumber?: string;
     status?: string | null;
-    fromDate?: Date | null;
-    toDate?: Date | null;
+    fromDate?: DateType | null;
+    toDate?: DateType | null;
     vendorCode?: string;
     waybill?: string;
   }) => void;
 }) => {
   const {filter, setFilter, clearFilter, setFilterApply} =
     useTrackingOrderStore();
-  const defaultStyles = useDefaultStyles();
-
-  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
-
-  const startformattedDOB = filter.fromDate
-    ? dayjs(filter.fromDate).format('DD MMM YYYY')
-    : 'DD/MM/YYYY';
-  const endformattedDOB = filter.toDate
-    ? dayjs(filter.toDate).format('DD MMM YYYY')
-    : 'DD/MM/YYYY';
   const defaultFilter = {
     day: 0,
     fromDate: null,
@@ -101,63 +89,9 @@ const FilterModal = ({
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginBottom: 20,
                 }}>
                 <Text style={styles.modalTitle}>Filter Orders</Text>
                 <X onPress={onClose} />
-              </View>
-              <View style={{flexDirection: 'column', gap: 20}}>
-                <CustomTextInput
-                  label="AWB No."
-                  value={filter.waybill}
-                  keyboardType="default"
-                  placeholder="AWB No."
-                  placeholderTextColor="#ccc"
-                  onChangeText={val => {
-                    setFilter({waybill: val});
-                  }}
-                  leftIcon={
-                    <CustomIcons
-                      type="MaterialIcons"
-                      name="local-shipping"
-                      size={20}
-                      color="gray"
-                    />
-                  }
-                />
-                <CustomTextInput
-                  label="Order ID"
-                  value={filter.orderId}
-                  keyboardType="default"
-                  placeholder="Order Id"
-                  placeholderTextColor="#ccc"
-                  onChangeText={val => {
-                    setFilter({orderId: val});
-                  }}
-                  leftIcon={
-                    <CustomIcons
-                      type="MaterialIcons"
-                      name="local-shipping"
-                      size={20}
-                      color="gray"
-                    />
-                  }
-                />
-                <CustomTextInput
-                  label="Reference No."
-                  value={filter.referenceNumber}
-                  placeholder="Reference No."
-                  placeholderTextColor="#ccc"
-                  onChangeText={val => setFilter({referenceNumber: val})}
-                  leftIcon={
-                    <CustomIcons
-                      type="MaterialIcons"
-                      name="local-shipping"
-                      size={20}
-                      color="gray"
-                    />
-                  }
-                />
               </View>
 
               <Text style={styles.label}>Status</Text>
@@ -261,31 +195,6 @@ const FilterModal = ({
                 }
               />
 
-              <View style={{marginTop: 20}}>
-                <TouchableOpacity
-                  style={styles.input}
-                  onPress={() => setIsDatePickerVisible(true)}
-                  activeOpacity={0.7}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text
-                      style={{
-                        color:
-                          startformattedDOB || endformattedDOB
-                            ? '#000'
-                            : '#999',
-                      }}>
-                      {`${startformattedDOB} - ${endformattedDOB}` ||
-                        'DD/MM/YYYY'}
-                    </Text>
-                    <Calendar />
-                  </View>
-                </TouchableOpacity>
-              </View>
               <View style={styles.buttonContainer}>
                 <Pressable
                   style={styles.clearButton}
@@ -314,71 +223,6 @@ const FilterModal = ({
               </View>
             </ScrollView>
           </TouchableWithoutFeedback>
-          <Modal
-            visible={isDatePickerVisible}
-            transparent
-            animationType="slide">
-            <View style={[styles.modalOverlay]}>
-              <View
-                style={[
-                  styles.modalContent,
-                  {
-                    padding: 40,
-                  },
-                ]}>
-                <DateTimePicker
-                  mode="range"
-                  startDate={filter.fromDate}
-                  endDate={filter.toDate}
-                  onChange={({startDate, endDate}) => {
-                    setFilter({
-                      fromDate: startDate ? new Date(startDate as any) : null,
-                      toDate: endDate ? new Date(endDate as any) : null,
-                    });
-                  }}
-                  styles={{
-                    selected: {
-                      backgroundColor: '#184ea3',
-                      borderRadius: 8,
-                    },
-                    selected_label: {
-                      color: '#fff',
-                    },
-                    button_prev: {
-                      color: '#000',
-                      backgroundColor: 'blue',
-                      tintColor: '#000',
-                      borderRadius: 4,
-                    },
-                    button_next: {
-                      color: '#000',
-                      backgroundColor: 'blue',
-                      tintColor: '#000',
-                      borderRadius: 4,
-                    },
-                  }}
-                  maxDate={today}
-                  minDate={fiftyYearsAgo}
-                />
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setIsDatePickerVisible(false)}>
-                    <Text style={styles.closeButtonText}>Done</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setIsDatePickerVisible(false)}>
-                    <Text style={styles.closeButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
         </View>
       </KeyboardAvoidingView>
     </Modal>

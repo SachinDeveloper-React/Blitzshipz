@@ -1,3 +1,4 @@
+import {DateType} from 'react-native-ui-datepicker';
 import {create} from 'zustand';
 
 type OrderStatus = {
@@ -99,8 +100,8 @@ export type TrackOrderState = {
     phoneNumber: string;
     productCategory: string;
     referenceNumber: string;
-    toDate: Date | null;
-    fromDate: Date | null;
+    fromDate: DateType | null;
+    toDate: DateType | null;
     waybill: string;
     status:
       | 'All'

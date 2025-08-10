@@ -4,7 +4,8 @@ import {
   useFundStore,
 } from '../../store';
 import {DashboardApi, FundApi} from '../../networking';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import {debounce} from 'lodash';
 
 type Status =
   | 'Delivered'
@@ -193,9 +194,11 @@ const useDashboardService = () => {
   ) => {
     switch (type) {
       case 'orderFilterUser':
+        if (loading.loadMoreOrderfilter) return;
         await orderFilterUser(body, currentPage, false, true);
         break;
       case 'CancelledFilterUser':
+        if (loading.loadMoreCancelfilter) return;
         await CancelledFilterUser(
           body?.status as 'Cancelled',
           currentPage,
@@ -207,6 +210,26 @@ const useDashboardService = () => {
         break;
     }
   };
+
+  const debouncedCancelLoadMore = useCallback(
+    debounce(() => {
+      if (currentPage >= totalPages) return;
+      loadMore('CancelledFilterUser', {
+        status: 'Cancelled',
+      });
+    }, 300),
+    [currentPage, totalPages, loading.loadMoreCancelfilter],
+  );
+  const debouncedOrderLoadMore = useCallback(
+    debounce(
+      () =>
+        loadMore('orderFilterUser', {
+          status: 'Order',
+        }),
+      300,
+    ),
+    [currentPage, totalPages, loading.loadMoreOrderfilter],
+  );
   const onRefresh = async (
     type: 'orderFilterUser' | 'CancelledFilterUser',
     body: any,
@@ -488,6 +511,8 @@ const useDashboardService = () => {
     balance,
     totalElements,
     paiChartData,
+    debouncedCancelLoadMore,
+    debouncedOrderLoadMore,
   };
 };
 

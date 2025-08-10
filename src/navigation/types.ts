@@ -21,6 +21,7 @@ export type DrawerStackParamList = {
   BookmyOrderScreen: undefined;
   FaqScreen: undefined;
   SupportScreen: undefined;
+  PrintLabelScreen: undefined;
 };
 
 export type BottomTabParamList = {
@@ -31,6 +32,7 @@ export type BottomTabParamList = {
 };
 
 export type RootStackParamList = {
+  SplashScreen: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList>;
   Drawer: NavigatorScreenParams<DrawerStackParamList>;
   Bottom: NavigatorScreenParams<BottomTabParamList>;

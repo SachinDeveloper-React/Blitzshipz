@@ -203,7 +203,7 @@ export default function TicketsScreen({
         }) => {
           const createdDateFromFormat = formatDate(createdDateFrom);
           const createdDateToFormat = formatDate(createdDateTo);
-          console.log(createdDateFromFormat, createdDateToFormat);
+
           handleFilter('category', category);
           handleFilter('subCategory', subCategory);
           handleFilter('createdDateFrom', createdDateFromFormat);

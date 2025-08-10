@@ -15,6 +15,7 @@ export {
   OrderDetailsScreen,
   MyDocumentsScreen,
   SellerScreen,
+  PrintLabelScreen,
 } from './Common';
 export {
   DashboardScreen,
@@ -40,3 +41,5 @@ export {
   ChatSupportScreen,
   ChangePasswordScreen,
 } from './Settings';
+
+export {default as SplashScreen} from './SplashScreen';

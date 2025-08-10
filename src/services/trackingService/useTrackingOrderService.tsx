@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTrackingOrderStore} from '../../store';
 import {TrackingApi} from '../../networking';
+import {DateType} from 'react-native-ui-datepicker';
 
 const useTrackingOrderService = () => {
   const {
@@ -13,28 +14,43 @@ const useTrackingOrderService = () => {
     setCurrentPage,
     setTotalElements,
     setTotalPages,
+    clearFilter,
+    setFilter,
+    setFilterApply,
+    clearTrackingOrderData,
+    totalElements,
+    totalPages,
   } = useTrackingOrderStore();
 
   const [loading, setLoading] = useState({
     trackOrderData: false,
     refreshTrackOrderData: false,
     loadMoreTrackOrderData: false,
-    excelDataLoading: true,
+    excelDataLoading: false,
   });
 
   const [excelData, setExcelData] = useState([]);
+  const [excelLoading, setExcelLoading] = useState(false);
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    toDate: DateType | null;
+    fromDate: DateType | null;
+  }>({
+    toDate: null,
+    fromDate: null,
+  });
 
   const trackOrderDeatils = async (
     body: {
       day?: number;
-      fromDate?: Date | null;
+      fromDate?: DateType | null;
       orderId?: string;
       paymentMode?: string;
       phoneNumber?: string;
       productCategory?: string;
       referenceNumber?: string;
       status?: string | null;
-      toDate?: Date | null;
+      toDate?: DateType | null;
       vendorCode?: string;
       waybill?: string;
     },
@@ -108,14 +124,14 @@ const useTrackingOrderService = () => {
 
   const onRefresh = (body: {
     day?: number;
-    fromDate?: Date | null;
+    fromDate?: DateType | null;
     orderId?: string;
     paymentMode?: string;
     phoneNumber?: string;
     productCategory?: string;
     referenceNumber?: string;
     status?: string | null;
-    toDate?: Date | null;
+    toDate?: DateType | null;
     vendorCode?: string;
     waybill?: string;
   }) => {
@@ -124,21 +140,18 @@ const useTrackingOrderService = () => {
 
   const onFilter = async (body: {
     day?: number;
-    fromDate?: Date | null;
+    fromDate?: DateType | null;
     orderId?: string;
     paymentMode?: string;
     phoneNumber?: string;
     productCategory?: string;
     referenceNumber?: string;
     status?: string | null;
-    toDate?: Date | null;
+    toDate?: DateType | null;
     vendorCode?: string;
     waybill?: string;
   }) => {
-    await Promise.all([
-      trackOrderDeatils(body, 0),
-      trackOrderDeatilsForExcel(body),
-    ]);
+    await trackOrderDeatils(body, 0);
   };
 
   const loadMore = () => {
@@ -151,10 +164,7 @@ const useTrackingOrderService = () => {
   };
   useEffect(() => {
     (async () => {
-      await Promise.all([
-        trackOrderDeatils({status: null}, 0),
-        trackOrderDeatilsForExcel({}),
-      ]);
+      await trackOrderDeatils({status: null}, 0);
     })();
   }, []);
 
@@ -167,6 +177,19 @@ const useTrackingOrderService = () => {
     onFilter,
     loadMore,
     excelData,
+    clearFilter,
+    setFilter,
+    setFilterApply,
+    clearTrackingOrderData,
+    totalElements,
+    totalPages,
+    excelLoading,
+    setExcelLoading,
+    isDatePickerVisible,
+    setIsDatePickerVisible,
+    dateRange,
+    setDateRange,
+    setLoading,
   };
 };
 

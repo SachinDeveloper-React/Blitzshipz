@@ -1,9 +1,12 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
+  Keyboard,
   ListRenderItem,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,12 +15,19 @@ import {
 import React, {useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabParamList} from '../../../navigation';
-import {CustomIcons} from '../../../components';
+import {
+  CustomButton,
+  CustomDatePickerModal,
+  CustomIcons,
+  CustomTextInput,
+} from '../../../components';
 import {FilterModal, OrderTrackCard} from './components';
 import {OrderDetails} from '../../../types';
 import {useTrackingOrderService} from '../../../services';
 import {exportExcel} from '../../../utils/exportExcel';
-import {showToast} from '../../../utils';
+import {formatDate, showToast} from '../../../utils';
+import Foundation from 'react-native-vector-icons/Foundation';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const TrackOrderScreen = ({
   navigation,
@@ -32,6 +42,15 @@ const TrackOrderScreen = ({
     filterApply,
     filter,
     loadMore,
+    setFilter,
+    setFilterApply,
+    dateRange,
+    excelLoading,
+    isDatePickerVisible,
+    setDateRange,
+    setIsDatePickerVisible,
+    setLoading,
+    clearFilter,
   } = useTrackingOrderService();
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -39,17 +58,44 @@ const TrackOrderScreen = ({
 
   const exportExcelSheet = async () => {
     try {
-      if (loading.excelDataLoading) return;
-
       if (!filter.fromDate || !filter.toDate) {
         showToast('Please select both a start and end date to continue.');
         return;
       }
 
-      await exportExcel(excelData || [], 'track');
+      if (loading.excelDataLoading) return;
+      onFilter(filter);
+      setFilterApply(true);
+      // console.log(data?.length);
+      // await exportExcel(data || [], 'track');
     } catch (error) {
       console.error('Excel export failed:', error);
       showToast('Failed to export data. Please try again.');
+    } finally {
+      setLoading(prev => ({
+        ...prev,
+        excelDataLoading: false,
+      }));
+      setIsDatePickerVisible(false);
+    }
+  };
+  const exportExcelSheetWithFilter = async () => {
+    try {
+      if (loading.excelDataLoading) return;
+      if (!data) return;
+      if (data?.length <= 0) {
+        showToast('Data is not availale');
+        return;
+      }
+      await exportExcel(data || [], 'track');
+    } catch (error) {
+      console.error('Excel export failed:', error);
+      showToast('Failed to export data. Please try again.');
+    } finally {
+      setLoading(prev => ({
+        ...prev,
+        excelDataLoading: false,
+      }));
     }
   };
 
@@ -57,10 +103,14 @@ const TrackOrderScreen = ({
     navigation.setOptions({
       headerRight: () => {
         return (
-          <TouchableOpacity onPress={exportExcelSheet}>
-            {loading.excelDataLoading ? (
-              <ActivityIndicator />
-            ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              paddingRight: 8,
+            }}>
+            <TouchableOpacity onPress={() => setIsDatePickerVisible(true)}>
               <Image
                 source={require('../../../assets/excelImage.png')}
                 style={{
@@ -70,28 +120,35 @@ const TrackOrderScreen = ({
                 resizeMethod="scale"
                 resizeMode="contain"
               />
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (!filterApply) return;
+                clearFilter();
+                setFilterApply(false);
+                onFilter({status: null});
+              }}>
+              <MaterialIcons name="filter-alt-off" size={30} color="#000" />
+            </TouchableOpacity>
+          </View>
         );
       },
     });
   }, [navigation, loading]);
 
-  if (loading.trackOrderData) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (!data) {
-    return <></>;
-  }
-
   const renderItem: ListRenderItem<OrderDetails> = ({item}) => (
     <OrderTrackCard {...item} />
   );
+
+  const hasValue = (val: any) => {
+    return val !== null && val !== undefined && val !== '' && val !== 0;
+  };
+
+  const hasAnyValue = (obj: any) =>
+    Object.values(obj).some(
+      val => val !== null && val !== undefined && val !== '' && val !== 0,
+    );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -104,32 +161,144 @@ const TrackOrderScreen = ({
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading.refreshTrackOrderData}
-            onRefresh={() => onRefresh(filterApply ? filter : {status: null})}
+      <View style={{marginBottom: 10, flexDirection: 'row', gap: 10}}>
+        <View style={{flex: 1}}>
+          <CustomTextInput
+            label="AWB No."
+            value={
+              filter.orderId.startsWith('ATCOD')
+                ? filter.orderId
+                : filter.waybill
+            }
+            keyboardType="default"
+            placeholder="AWB No. & Order Id"
+            placeholderTextColor="#ccc"
+            onChangeText={val => {
+              if (val.startsWith('ATCOD')) {
+                setFilter({
+                  ...filter,
+                  orderId: val,
+                  waybill: '',
+                });
+              } else {
+                setFilter({
+                  ...filter,
+                  waybill: val,
+                  orderId: '',
+                });
+              }
+            }}
+            leftIcon={
+              <CustomIcons
+                type="MaterialIcons"
+                name="local-shipping"
+                size={20}
+                color="gray"
+              />
+            }
           />
-        }
-        keyExtractor={(item, index) => `${item.waybill}-${index}`}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <Text style={styles.empty}>No shipments available.</Text>
-        }
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
-        removeClippedSubviews
-        windowSize={10}
-      />
+        </View>
+        <CustomButton
+          title="Search"
+          onPress={() => {
+            setFilterApply(true);
+            onFilter(filter);
+            Keyboard.dismiss();
+          }}
+        />
+      </View>
 
-      <FilterModal
-        visible={filterModalVisible}
-        onClose={toggleFilterModal}
-        applyFilter={onFilter}
+      {hasAnyValue(filter) && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterCapsultContainer}>
+          {Object.entries(filter)
+            .filter(([_, value]) => hasValue(value))
+            .map(([key, value]) => (
+              <View key={key} style={styles.capsule}>
+                <Text style={styles.key}>{key}:</Text>
+                <Text style={styles.value}>{value?.toString() ?? ''}</Text>
+              </View>
+            ))}
+        </ScrollView>
+      )}
+
+      {loading.trackOrderData ? (
+        <>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size="large" />
+          </View>
+        </>
+      ) : (
+        <>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading.refreshTrackOrderData}
+                onRefresh={() =>
+                  onRefresh(filterApply ? filter : {status: null})
+                }
+              />
+            }
+            keyExtractor={(item, index) => `${item.waybill}-${index}`}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text style={styles.empty}>No shipments available.</Text>
+            }
+            initialNumToRender={5}
+            maxToRenderPerBatch={10}
+            removeClippedSubviews
+            windowSize={10}
+          />
+          <FilterModal
+            visible={filterModalVisible}
+            onClose={toggleFilterModal}
+            applyFilter={onFilter}
+          />
+        </>
+      )}
+
+      <TouchableOpacity
+        onPress={exportExcelSheetWithFilter}
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          backgroundColor: '#0a2f50',
+          width: 50,
+          height: 50,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 50,
+        }}>
+        <Foundation name="page-export-csv" size={30} color="#fff" />
+      </TouchableOpacity>
+
+      <CustomDatePickerModal
+        visible={isDatePickerVisible}
+        onClose={() => setIsDatePickerVisible(false)}
+        onSubmit={() => {
+          exportExcelSheet();
+        }}
+        date={dateRange}
+        loading={excelLoading}
+        onSelect={(startDate, endDate) => {
+          setFilter({
+            fromDate: startDate ? formatDate(startDate) : null,
+            toDate: endDate ? formatDate(endDate) : null,
+          });
+          setDateRange({
+            fromDate: startDate ? formatDate(startDate) : null,
+            toDate: endDate ? formatDate(endDate) : null,
+          });
+        }}
+        title="Pick Order Date"
       />
     </View>
   );
@@ -242,5 +411,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
+  },
+  filterCapsultContainer: {
+    paddingVertical: 8,
+    gap: 8,
+    height: 50,
+    marginBottom: 24,
+  },
+  capsule: {
+    flexDirection: 'row',
+    backgroundColor: '#e0e0e0',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+  },
+  key: {
+    fontWeight: '600',
+    marginRight: 6,
+    color: '#555',
+    textTransform: 'capitalize',
   },
 });

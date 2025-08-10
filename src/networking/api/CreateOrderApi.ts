@@ -212,6 +212,45 @@ const CreateOrderApi = {
       return errorHandler(error);
     }
   },
+
+  getPrintLabel: async (
+    body: {
+      orderLive: boolean;
+      rtoMarked: boolean;
+      status: 'Manifested';
+    },
+    page: string | number,
+  ) => {
+    try {
+      const response = await ApiClient.post(
+        `${URLS.CREATEORDER.GETBOOKMYORDER}?page=${page}&size=10`,
+        body,
+      );
+
+      return responseHandler(response);
+    } catch (error) {
+      console.log('error', error);
+      return errorHandler(error);
+    }
+  },
+
+  savePrintLabel: async (pages: 1 | 2 | 4, body: string[]) => {
+    try {
+      const UrlPages = {
+        1: '/jasper/labels/shipping-labels/bulk-by-orders?returnAddressVisible=false&mobileNumberVisible=false',
+        2: '/jasper/labels/shipping-labels/2-per-page/by-orders?returnAddressVisible=false&mobileNumberVisible=false',
+        4: '/jasper/labels/shipping-labels/4-per-page/by-orders?returnAddressVisible=false&mobileNumberVisible=false',
+      };
+
+      const response = await ApiClient.post(UrlPages[pages], body, {
+        responseType: 'arraybuffer',
+      });
+      return responseHandler(response);
+    } catch (error) {
+      console.log('error', error);
+      return errorHandler(error);
+    }
+  },
 };
 
 export default CreateOrderApi;

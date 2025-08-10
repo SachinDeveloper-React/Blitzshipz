@@ -24,6 +24,7 @@ import {
   RemittanceScreen,
   SellerScreen,
   ShipmentTrackingScreen,
+  SplashScreen,
   SupportScreen,
   WarehouseScreen,
 } from '../routes';
@@ -41,6 +42,7 @@ const AppNavigator = (props: Props) => {
         headerShown: false,
         animation: 'slide_from_right',
       }}>
+      {/* <RootStack.Screen name="SplashScreen" component={SplashScreen} /> */}
       {!isAuthenticated ? (
         <>
           <RootStack.Screen name="Auth" component={AuthNavigator} />

@@ -62,7 +62,8 @@ export const exportExcel = async (data: any[], fileName: string) => {
 
     return savedUri;
   } catch (err: any) {
-    console.error('Export error:', err);
-    Alert.alert('Export Failed', err.message || 'Something went wrong');
+    console.log('Export error:', err);
+    // Alert.alert('Export Failed', err.message || 'Something went wrong');
+    return err.message;
   }
 };

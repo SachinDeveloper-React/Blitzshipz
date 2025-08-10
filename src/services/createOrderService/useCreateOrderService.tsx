@@ -6,7 +6,7 @@ import {
   useWarehouseStore,
 } from '../../store';
 import {CreateOrderApi, ProfileApi, WarehouseApi} from '../../networking';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {
   createDropDetailsSchema,
   createOrderSchema,
@@ -32,7 +32,6 @@ const useCreateOrderService = () => {
     resetOrder,
   } = useCreateOrderStore();
 
-  console.log('state', state);
   const {warehouses, setWarehouses} = useWarehouseStore();
   const {
     sellers,
@@ -42,6 +41,7 @@ const useCreateOrderService = () => {
     setSellerError,
     setSellerLoading,
   } = useSellerStore();
+  const [createOrderLoading, setCreateOrderLoading] = useState(false);
 
   // State
 
@@ -92,7 +92,6 @@ const useCreateOrderService = () => {
           setOrderField('dropState', response.data.state);
         }
       } else {
-        console.log('Erroor', response);
         setError(
           type === 'pin' ? 'dropPincode' : 'returnPincode',
           'Pincode not found',
@@ -107,6 +106,7 @@ const useCreateOrderService = () => {
 
   const handleCreateOrder = async () => {
     try {
+      setCreateOrderLoading(true);
       const payload =
         type === 'create'
           ? {
@@ -234,7 +234,6 @@ const useCreateOrderService = () => {
           ? await CreateOrderApi.createOrder(payload as any)
           : await CreateOrderApi.editOrder(state?.id ?? '', payload as any);
 
-      console.log('response', response);
       if (response.code === 200) {
         const {statusCode, message} = response.data;
 
@@ -262,6 +261,8 @@ const useCreateOrderService = () => {
     } catch (error) {
       console.error('Order creation failed:', error);
       showToast('Failed to create order. Please try again later.');
+    } finally {
+      setCreateOrderLoading(false);
     }
   };
 
@@ -366,6 +367,7 @@ const useCreateOrderService = () => {
     handleCreateSeller,
     fetchAllData,
     resetOrder,
+    createOrderLoading,
   };
 };
 

@@ -83,8 +83,6 @@ const CreateOrderScreen = ({
     'VirtualizedLists should never be nested', // 👈 Not recommended unless absolutely necessary
   ]);
 
-  console.log('type', type);
-
   return (
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -100,7 +98,9 @@ const CreateOrderScreen = ({
           scrollEnabled={!open1 || !open2}>
           <Text style={styles.heading}>Pickup Details</Text>
           <View>
-            <Text style={styles.label}>Please select your pickup address</Text>
+            <Text style={styles.label}>
+              Please select your pickup address *
+            </Text>
             <DropDownPicker
               listMode="FLATLIST"
               open={open1}

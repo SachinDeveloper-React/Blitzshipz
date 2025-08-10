@@ -27,11 +27,12 @@ const OrdersScreen = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [selectedTab, setSelectedTab] = useState<
-    'Manifested' | 'In Transit' | 'Dispatched' | 'Delivered'
+    'Manifested' | 'Not Picked' | 'In Transit' | 'Dispatched' | 'Delivered'
   >('Manifested');
 
   const [refresh, setRefresh] = useState(false);
   const [moreload, setMoreload] = useState(false);
+  const [excelLoading, setExcelLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [dateRange, setDateRange] = useState<{
@@ -60,6 +61,9 @@ const OrdersScreen = (props: Props) => {
     setRefresh(false);
   };
   const moreLoad = async () => {
+    if (moreload) return;
+
+    if (currentPage >= totalPages) return;
     setMoreload(true);
     const body = {
       waybill: '',
@@ -82,6 +86,7 @@ const OrdersScreen = (props: Props) => {
         return;
       }
 
+      setExcelLoading(true);
       const body = {
         day: 0,
         fromDate: formatDate(dateRange.fromDate) ?? '',
@@ -102,10 +107,13 @@ const OrdersScreen = (props: Props) => {
         return;
       }
 
-      await exportExcel(excelData.data.content || [], 'rto');
+      await exportExcel(excelData.data.content || [], 'Orders');
+      setIsDatePickerVisible(false);
     } catch (error) {
       console.error('Excel export failed:', error);
       showToast('Failed to export data. Please try again.');
+    } finally {
+      setExcelLoading(false);
     }
   };
 
@@ -147,50 +155,7 @@ const OrdersScreen = (props: Props) => {
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        {!searchActive ? (
-          <>
-            <View>
-              <TouchableOpacity
-                style={styles.dateContainer}
-                onPress={() => setIsDatePickerVisible(true)}>
-                <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-                  <Text style={styles.dateText}>
-                    {formatDate(dateRange.fromDate as any) ||
-                      'Select From Date'}
-                  </Text>
-                  <Text style={styles.dateText}>-</Text>
-                  <Text style={styles.dateText}>
-                    {formatDate(dateRange.toDate as any) || 'Select To Date'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <CustomDatePickerModal
-                visible={isDatePickerVisible}
-                onClose={() => setIsDatePickerVisible(false)}
-                date={dateRange}
-                onSelect={(startDate, endDate) => {
-                  setDateRange({
-                    fromDate: startDate ? new Date(startDate as any) : null,
-                    toDate: endDate ? new Date(endDate as any) : null,
-                  });
-                }}
-                title="Pick Order Date"
-              />
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Search onPress={() => setSearchActive(!searchActive)} />
-              <TouchableOpacity onPress={exportExcelSheet}>
-                <Image
-                  source={require('../../../../../assets/excelImage.png')}
-                  style={{width: 60, height: 60}}
-                  resizeMethod="scale"
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
+        {searchActive && (
           <>
             <TextInput
               placeholder="Search by Order ID or Waybill"
@@ -214,15 +179,32 @@ const OrdersScreen = (props: Props) => {
 
       <View style={styles.header}>
         <CustomText style={styles.title}>
-          {selectedTab === 'Manifested' ? 'Pickups' : selectedTab}{' '}
-          {totalElements || 0}
+          {filterData.length > 0
+            ? selectedTab === 'Manifested'
+              ? 'Pickups'
+              : selectedTab
+            : 'Order List'}{' '}
+          {totalElements || ''}
         </CustomText>
-
-        <TouchableOpacity onPress={toggleDropdown}>
-          <CustomText style={styles.filterToggle}>
-            {selectedTab === 'Manifested' ? 'Pickups' : selectedTab} ▾
-          </CustomText>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Search onPress={() => setSearchActive(!searchActive)} />
+            {/* <TouchableOpacity onPress={exportExcelSheet}> */}
+            <TouchableOpacity onPress={() => setIsDatePickerVisible(true)}>
+              <Image
+                source={require('../../../../../assets/excelImage.png')}
+                style={{width: 50, height: 50}}
+                resizeMethod="scale"
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity onPress={toggleDropdown}>
+            <CustomText style={styles.filterToggle}>
+              {selectedTab === 'Manifested' ? 'Pickups' : selectedTab} ▾
+            </CustomText>
+          </TouchableOpacity>
+        </View>
         {showStatusDropdown && (
           <Pressable
             style={styles.dropdown}
@@ -235,6 +217,14 @@ const OrdersScreen = (props: Props) => {
                 setShowStatusDropdown(false);
               }}>
               Pickups
+            </CustomText>
+            <CustomText
+              style={{paddingVertical: 10}}
+              onPress={() => {
+                setSelectedTab('Not Picked');
+                setShowStatusDropdown(false);
+              }}>
+              Not Picked
             </CustomText>
             <CustomText
               style={{paddingVertical: 10}}
@@ -272,8 +262,26 @@ const OrdersScreen = (props: Props) => {
           onRefresh={onRefresh}
           refresh={refresh}
           onLoad={moreLoad}
+          ListFooterComponent={() => moreload && <ActivityIndicator />}
         />
       )}
+
+      <CustomDatePickerModal
+        visible={isDatePickerVisible}
+        onClose={() => setIsDatePickerVisible(false)}
+        onSubmit={() => {
+          exportExcelSheet();
+        }}
+        date={dateRange}
+        loading={excelLoading}
+        onSelect={(startDate, endDate) => {
+          setDateRange({
+            fromDate: startDate ? new Date(startDate as any) : null,
+            toDate: endDate ? new Date(endDate as any) : null,
+          });
+        }}
+        title="Pick Order Date"
+      />
     </Pressable>
   );
 };
@@ -286,7 +294,7 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'relative',
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,3 +1,4 @@
+import {DateType} from 'react-native-ui-datepicker';
 import {errorHandler, responseHandler} from '../../utils';
 import ApiClient from '../ApiClient';
 import {URLS} from '../Urls';
@@ -34,14 +35,14 @@ const TrackingApi = {
   trackOrderListWithFilter: async (
     body: {
       day?: number;
-      fromDate?: Date | null;
+      fromDate?: DateType | null;
       orderId?: string;
       paymentMode?: string;
       phoneNumber?: string;
       productCategory?: string;
       referenceNumber?: string;
       status?: string | null;
-      toDate?: Date | null;
+      toDate?: DateType | null;
       vendorCode?: string;
       waybill?: string;
     },
