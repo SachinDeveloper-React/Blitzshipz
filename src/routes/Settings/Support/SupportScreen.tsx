@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Text,
+  StatusBar,
 } from 'react-native';
 import {RootStackParamList} from '../../../navigation';
 import {CustomIcons} from '../../../components';
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingVertical: 16,
   },
   card: {
     backgroundColor: '#fff',

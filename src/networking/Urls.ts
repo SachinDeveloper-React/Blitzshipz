@@ -11,6 +11,7 @@ export const URLS = {
     PICKEDUPDETAILS: '/orders/dashboard/pickedUp-details',
     ORDERDATAREVENUE: '/orders/dashboard/order-data-revenue',
     ORDERDATAGRAPH: '/orders/dashboard/order-data-graph',
+    ZONEDISTRIBUTER: '/orders/dashboard/zone-distribution-user',
     OREDERFILTERUSER: '/orders/filter-user',
     NDR: {
       NDRLIST: '/orders/get-ndr-list',
@@ -78,5 +79,8 @@ export const URLS = {
   RATECALCULATOR: {
     CALCULATOR: '/orders/rate-calculator',
     CARD: '/orders/zone/get-rate-card',
+  },
+  ORDERRATES: {
+    BATCHRATELIST: 'orders/batch-rate-list',
   },
 };

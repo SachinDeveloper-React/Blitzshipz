@@ -22,6 +22,14 @@ const DashboardApi = {
       return errorHandler(error);
     }
   },
+  zoneDistributer: async () => {
+    try {
+      const response = await ApiClient.get(URLS.DASHBOARD.ZONEDISTRIBUTER);
+      return responseHandler(response);
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
 
   orderDataRevenue: async (start: string, end: string) => {
     try {

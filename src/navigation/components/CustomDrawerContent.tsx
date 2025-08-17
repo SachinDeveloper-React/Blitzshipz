@@ -40,37 +40,39 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     <DrawerContentScrollView {...props}>
       <DrawerItem
         label="Dashboard"
-        icon={({size}) => (
-          <Image
-            source={require('../../assets/icons/layout.png')}
-            style={{width: size, height: size, resizeMode: 'contain'}}
-          />
-        )}
+        icon={({size, color}) => {
+          return (
+            <Image
+              source={require('../../assets/icons/layout.png')}
+              style={{width: size, height: size, resizeMode: 'contain'}}
+            />
+          );
+        }}
         focused={isActive('Home')}
         onPress={() => navigation.navigate('Home')}
       />
 
-      {/* Accordion Toggle */}
-      <TouchableOpacity
+      <DrawerItem
+        label={() => (
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Text style={{fontSize: 14, color: 'rgba(28, 28, 30, 0.78)'}}>
+              Create Order
+            </Text>
+            <Animated.View
+              style={{marginLeft: 'auto', transform: [{rotate: rotateZ}]}}>
+              <MaterialIcons name="keyboard-arrow-up" size={22} color="#555" />
+            </Animated.View>
+          </View>
+        )}
+        icon={({size}) => (
+          <Image
+            source={require('../../assets/icons/createOrder.png')}
+            style={{width: size, height: size, resizeMode: 'contain'}}
+          />
+        )}
         onPress={toggleAccordion}
-        style={styles.accordionHeader}>
-        <Image
-          source={require('../../assets/icons/createOrder.png')}
-          style={{
-            width: 20,
-            height: 20,
-            resizeMode: 'contain',
-          }}
-        />
-        <Text style={styles.accordionLabel}>Create Order</Text>
-        <Animated.View
-          style={{
-            marginLeft: 'auto',
-            transform: [{rotate: rotateZ}],
-          }}>
-          <MaterialIcons name="keyboard-arrow-up" size={20} />
-        </Animated.View>
-      </TouchableOpacity>
+        focused={isActive('')}
+      />
 
       {/* Accordion Content */}
       {showCreateOrderOptions && (
@@ -82,7 +84,15 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               isActive('BookmyOrderScreen') && styles.activeItem,
             ]}>
             <FontAwesome name="caret-right" size={20} color={'#ccc'} />
-            <Text style={isActive('BookmyOrderScreen') && styles.activeLabel}>
+            <Text
+              style={
+                isActive('BookmyOrderScreen')
+                  ? styles.activeLabel
+                  : {
+                      fontSize: 14,
+                      color: 'rgba(28, 28, 30, 0.78)',
+                    }
+              }>
               Book My Order
             </Text>
           </TouchableOpacity>
@@ -93,7 +103,15 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               isActive('PrintLabelScreen') && styles.activeItem,
             ]}>
             <FontAwesome name="caret-right" size={20} color={'#ccc'} />
-            <Text style={isActive('PrintLabelScreen') && styles.activeLabel}>
+            <Text
+              style={
+                isActive('PrintLabelScreen')
+                  ? styles.activeLabel
+                  : {
+                      fontSize: 14,
+                      color: 'rgba(28, 28, 30, 0.78)',
+                    }
+              }>
               Print Label
             </Text>
           </TouchableOpacity>
@@ -184,7 +202,9 @@ const styles = StyleSheet.create({
   },
   accordionLabel: {
     fontSize: 16,
-    marginLeft: 10,
+    marginLeft: 14,
+    fontWeight: '400',
+    color: 'rgba(28, 28, 30, 0.68)',
   },
   accordionContent: {
     paddingLeft: 56,

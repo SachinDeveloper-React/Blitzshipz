@@ -16,4 +16,5 @@ export {
   RateScreen,
   OrderDetailsScreen,
   PrintLabelScreen,
+  GetRatesScreen,
 } from './CreateOrder';

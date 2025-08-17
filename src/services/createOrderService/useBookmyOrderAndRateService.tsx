@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useOrderStore} from '../../store';
+import {useCreateOrderStore, useOrderStore} from '../../store';
 import {CreateOrderApi} from '../../networking';
 import {showToast} from '../../utils';
+import {OrderItem} from '../../types';
+import {navigate} from '../../navigation';
+import {Alert} from 'react-native';
 
 type Props = {};
 
@@ -41,13 +44,61 @@ const useBookmyOrderAndRateService = () => {
       zone: string;
     }[];
   }>();
+  const [pageSize, setPageSize] = useState<number | string>('10');
   const [loading, setLoading] = useState({
     bookmyOrderLoading: true,
     loadMorebookmyOrderLoading: true,
     refreshbookmyOrderLoading: true,
   });
 
-  const fetchOrders = async (refresh: boolean, next: boolean, page: number) => {
+  const [open, setOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [filtermodalVisible, setFilterModalVisible] = useState(false);
+  const [items, setItems] = useState([
+    {label: '10', value: '10'},
+    {label: '20', value: '20'},
+    {label: '30', value: '30'},
+    {label: '50', value: '50'},
+    {label: '75', value: '75'},
+    {label: '100', value: '100'},
+  ]);
+  const {state, fillFromState, setType} = useCreateOrderStore();
+  const [selectedOrders, setSelectedOrders] = useState<OrderItem[]>([]);
+  const [missingVolumeWeightOrders, setMissingVolumeWeightOrders] = useState<
+    OrderItem[]
+  >([]);
+
+  const [filterForm, setFilterForm] = useState<{
+    dropName: string;
+    orderId: string;
+    orderLive: boolean;
+    phoneNumber: string;
+    referenceNumber: string;
+    status: string | null;
+  }>({
+    dropName: '',
+    orderId: '',
+    orderLive: false,
+    phoneNumber: '',
+    referenceNumber: '',
+    status: null,
+  });
+
+  const [selectionMode, setSelectionMode] = useState(false);
+
+  const fetchOrders = async (
+    refresh: boolean,
+    next: boolean,
+    page: number,
+    body: {
+      dropName?: string;
+      orderId?: string;
+      orderLive: boolean;
+      phoneNumber?: string;
+      referenceNumber?: string;
+      status: string | null;
+    },
+  ) => {
     try {
       if (refresh)
         setLoading(prev => ({...prev, refreshbookmyOrderLoading: true}));
@@ -55,8 +106,9 @@ const useBookmyOrderAndRateService = () => {
         setLoading(prev => ({...prev, loadMorebookmyOrderLoading: true}));
       else setLoading(prev => ({...prev, bookmyOrderLoading: true}));
       const response = await CreateOrderApi.getBookmyOrder(
-        {orderLive: false, status: null},
+        body,
         page,
+        pageSize,
       );
 
       if (page === 0) {
@@ -95,11 +147,11 @@ const useBookmyOrderAndRateService = () => {
   };
 
   const handleLoadMore = async () => {
-    await fetchOrders(false, true, pagination?.currentPage);
+    await fetchOrders(false, true, pagination?.currentPage, filterForm);
   };
 
   const onRefresh = async () => {
-    await fetchOrders(true, false, 0);
+    await fetchOrders(true, false, 0, filterForm);
   };
 
   const deleteMenifestOrder = async (id: string) => {
@@ -112,6 +164,88 @@ const useBookmyOrderAndRateService = () => {
       showToast(response?.data?.message || 'Manifest Not deleted!');
     }
   };
+
+  const applyFilter = async () => {
+    setSelectedOrders([]);
+    setMissingVolumeWeightOrders([]);
+    setFilterModalVisible(false);
+    await fetchOrders(false, false, 0, filterForm);
+  };
+
+  // Utils functions
+
+  const handleEdit = (item: any) => {
+    setType('edit');
+    fillFromState(item);
+    navigate('EditOrderScreen');
+  };
+
+  const handlePay = (id: string) => {
+    navigate('RateScreen', {
+      id: id,
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    Alert.alert('Delete Order', 'Are you sure you want to delete this order?', [
+      {text: 'Cancel', style: 'cancel'},
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => deleteMenifestOrder(id),
+      },
+    ]);
+  };
+  const handlePress = (item: any) => {
+    if (selectionMode && selectedOrders.length > 0) {
+      toggleSelectOrder(item);
+    } else {
+      navigate('OrderDetailsScreen', {
+        orderDetailsData: item,
+      });
+    }
+  };
+
+  const toggleSelectOrder = (id: any) => {
+    setSelectionMode(true);
+    setSelectedOrders(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedOrders.length === orders.length) {
+      setSelectedOrders([]);
+      setSelectionMode(false);
+    } else {
+      setSelectedOrders(orders);
+      setSelectionMode(true);
+    }
+  };
+
+  const onHandleRates = () => {
+    if (selectedOrders.length <= 0) {
+      showToast('Please Select Multiple Orders');
+      return;
+    }
+    const missingWeightOrders = selectedOrders.filter(
+      (item: any) => !item?.volumentricWeight || item.volumentricWeight === 0,
+    );
+
+    if (missingWeightOrders.length > 0) {
+      setMissingVolumeWeightOrders(missingWeightOrders);
+      setModalVisible(true);
+      return;
+    }
+
+    // setMissingVolumeWeightOrders([]);
+    // setSelectedOrders([]);
+
+    navigate('GetRatesScreen', {
+      ids: selectedOrders.flatMap(item => item.id),
+    });
+  };
+
   return {
     handleLoadMore,
     orders,
@@ -121,6 +255,36 @@ const useBookmyOrderAndRateService = () => {
     fetchOrders,
     ratesData,
     deleteMenifestOrder,
+    pagination,
+    pageSize,
+    setPageSize,
+    open,
+    setOpen,
+    modalVisible,
+    setModalVisible,
+    items,
+    setItems,
+    state,
+    fillFromState,
+    setType,
+    selectedOrders,
+    setSelectedOrders,
+    missingVolumeWeightOrders,
+    setMissingVolumeWeightOrders,
+    selectionMode,
+    setSelectionMode,
+    filterForm,
+    setFilterForm,
+    handleEdit,
+    handlePay,
+    handleDelete,
+    handlePress,
+    toggleSelectAll,
+    onHandleRates,
+    toggleSelectOrder,
+    filtermodalVisible,
+    setFilterModalVisible,
+    applyFilter,
   };
 };
 

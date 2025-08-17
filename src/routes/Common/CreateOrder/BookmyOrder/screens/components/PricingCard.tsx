@@ -40,8 +40,10 @@ const PricingCard = ({
       </View>
 
       <View style={styles.rightSection}>
-        <Text style={styles.price}>Rs. {price}</Text>
-        <Text style={styles.estimateLabel}>Estimated Price</Text>
+        <View>
+          <Text style={styles.price}>Rs. {price}</Text>
+          <Text style={styles.estimateLabel}>Estimated Price</Text>
+        </View>
         <Pressable style={styles.chooseBtn} onPress={onChoose}>
           <Text style={styles.chooseText}>Choose</Text>
         </Pressable>
@@ -53,6 +55,7 @@ const PricingCard = ({
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
+    // alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     padding: 16,
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     borderRadius: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.35,
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 4,
     elevation: 2,
@@ -70,7 +73,8 @@ const styles = StyleSheet.create({
   },
   rightSection: {
     alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   vendorName: {
     fontSize: 16,

@@ -129,4 +129,7 @@ export type RootStackParamList = {
   ProductDetailsScreen: undefined;
   SellerScreen: undefined;
   EditOrderScreen: undefined;
+  GetRatesScreen: {
+    ids: string[];
+  };
 };

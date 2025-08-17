@@ -22,6 +22,7 @@ export {
   useBookmyOrderAndRateService,
   useCreateOrderService,
   usePrintLabelService,
+  useRateListService,
 } from './createOrderService';
 export {useChatSupportService} from './chatService';
 export {useRateService} from './rateService';

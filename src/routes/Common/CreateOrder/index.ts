@@ -1,2 +1,7 @@
-export {BookmyOrderScreen, RateScreen, OrderDetailsScreen} from './BookmyOrder';
+export {
+  BookmyOrderScreen,
+  RateScreen,
+  OrderDetailsScreen,
+  GetRatesScreen,
+} from './BookmyOrder';
 export {PrintLabelScreen} from './PrintLabel';

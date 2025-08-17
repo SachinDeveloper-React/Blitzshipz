@@ -4,12 +4,20 @@ import {URLS} from '../Urls';
 
 const CreateOrderApi = {
   getBookmyOrder: async (
-    body: {orderLive: boolean; status: string | null},
+    body: {
+      orderLive: boolean;
+      status: string | null;
+      dropName?: string;
+      orderId?: string;
+      phoneNumber?: string;
+      referenceNumber?: string;
+    },
     page: string | number,
+    size?: string | number,
   ) => {
     try {
       const response = await ApiClient.post(
-        `${URLS.CREATEORDER.GETBOOKMYORDER}?page=${page}&size=10`,
+        `${URLS.CREATEORDER.GETBOOKMYORDER}?page=${page}&size=${size || 10}`,
         body,
       );
 
@@ -245,6 +253,20 @@ const CreateOrderApi = {
       const response = await ApiClient.post(UrlPages[pages], body, {
         responseType: 'arraybuffer',
       });
+      return responseHandler(response);
+    } catch (error) {
+      console.log('error', error);
+      return errorHandler(error);
+    }
+  },
+
+  getBatchRateList: async (body: {orderIds: string[]}) => {
+    try {
+      const response = await ApiClient.post(
+        URLS.ORDERRATES.BATCHRATELIST,
+        body,
+      );
+
       return responseHandler(response);
     } catch (error) {
       console.log('error', error);

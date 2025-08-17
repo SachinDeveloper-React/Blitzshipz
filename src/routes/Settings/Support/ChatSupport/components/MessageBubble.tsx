@@ -1,20 +1,43 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {ChatMessage} from '../../../../../services/chatService/useChatSupportService';
-
+import Video from 'react-native-video';
+import {theme} from '../../../../../utils';
 const MessageBubble = ({item}: {item: ChatMessage}) => {
   const isUser = item.userResponse;
   return (
     <View
       style={[styles.messageContainer, isUser ? styles.user : styles.support]}>
       {item.attachment && (
-        <Image
-          source={{uri: item.attachment}}
-          style={styles.attachment}
-          resizeMode="contain"
-        />
+        <>
+          {item.objectType === 'A' ? (
+            <>
+              <Video
+                source={{uri: item.attachment}}
+                style={{width: '100%', aspectRatio: 16 / 9}}
+                controls
+              />
+            </>
+          ) : (
+            <>
+              <Image
+                source={{uri: item.attachment}}
+                style={styles.attachment}
+                resizeMode="contain"
+              />
+            </>
+          )}
+        </>
       )}
-      <Text style={styles.message}>{item.response}</Text>
+      <Text
+        style={[
+          styles.message,
+          {
+            color: !isUser ? '#fff' : '#000',
+          },
+        ]}>
+        {item.response}
+      </Text>
     </View>
   );
 };
@@ -33,7 +56,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   support: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.color.primary,
     alignSelf: 'flex-start',
   },
   message: {

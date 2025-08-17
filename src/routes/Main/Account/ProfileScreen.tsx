@@ -100,6 +100,9 @@ const ProfileScreen = ({navigation, route}: ProfileScreenProps) => {
     <ScrollView
       style={styles.container}
       showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingBottom: 16,
+      }}
       refreshControl={
         <RefreshControl
           refreshing={loading.refreshUserProfile}

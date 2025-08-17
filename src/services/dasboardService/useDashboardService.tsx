@@ -253,13 +253,15 @@ const useDashboardService = () => {
     const formattedStateDate = startDate.toISOString().split('T')[0];
     const formattedEndDate = endDate.toISOString().split('T')[0];
     try {
-      const [overview, graph, revenue, pickup, balance] = await Promise.all([
-        DashboardApi.overviewOrder(),
-        DashboardApi.orderDataGraph(formattedStateDate, formattedEndDate),
-        DashboardApi.orderDataRevenue(formattedStateDate, formattedEndDate),
-        DashboardApi.pickedUpDetails(),
-        FundApi.getBalance(),
-      ]);
+      const [overview, zoneDistributer, graph, revenue, pickup, balance] =
+        await Promise.all([
+          DashboardApi.overviewOrder(),
+          DashboardApi.zoneDistributer(),
+          DashboardApi.orderDataGraph(formattedStateDate, formattedEndDate),
+          DashboardApi.orderDataRevenue(formattedStateDate, formattedEndDate),
+          DashboardApi.pickedUpDetails(),
+          FundApi.getBalance(),
+        ]);
 
       let overviewResponseData = [];
       let paiData = [];
@@ -318,37 +320,36 @@ const useDashboardService = () => {
             ],
           );
 
+          console.log(
+            'zoneDistributer,',
+            zoneDistributer?.data?.zoneDistribution,
+          );
           paiData.push(
             ...[
               {
-                key: 'Live',
-                value: overview.data.data.inTransitOrder,
+                key: 'ZONEA',
+                value: zoneDistributer?.data?.zoneDistribution.ZONEA,
                 color: '#7bbae7',
               },
               {
-                key: 'Pickup Scheduled',
-                value: overview.data.data.pickupScheduleOrder,
+                key: 'ZONEB',
+                value: zoneDistributer?.data?.zoneDistribution.ZONEB,
                 color: '#6736fe',
               },
               {
-                key: 'Fulfilled',
-                value: overview.data.data.deliveredOrder,
+                key: 'ZONEC',
+                value: zoneDistributer?.data?.zoneDistribution.ZONEC,
                 color: '#34b579',
               },
               {
-                key: 'Non Delivered',
-                value: overview.data.data.nonDeliveredOrder,
+                key: 'ZONED',
+                value: zoneDistributer?.data?.zoneDistribution.ZONED,
                 color: '#fe6484',
               },
               {
-                key: 'Cancelled',
-                value: overview.data.data.canceledOrder,
+                key: 'ZONEE',
+                value: zoneDistributer?.data?.zoneDistribution.ZONEE,
                 color: '#5f9fa0',
-              },
-              {
-                key: 'Return',
-                value: overview.data.data.returnOrder,
-                color: '#c97e7d',
               },
             ],
           );

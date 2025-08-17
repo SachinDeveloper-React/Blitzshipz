@@ -194,7 +194,7 @@ const LoginScreen = (props: Props) => {
                 </CustomText>
               </View>
 
-              <View
+              {/* <View
                 style={{
                   backgroundColor: '#eae6fd',
                   alignSelf: 'center',
@@ -223,7 +223,7 @@ const LoginScreen = (props: Props) => {
                   title="Track Now"
                   onPress={() => navigate('ShipmentTracking')}
                 />
-              </View>
+              </View> */}
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>

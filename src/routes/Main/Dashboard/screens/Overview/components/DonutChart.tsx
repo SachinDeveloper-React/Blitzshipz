@@ -29,22 +29,25 @@ const DonutChart: React.FC<DonutChartProps> = ({data}) => {
     ];
   }
 
+  const total = pieData.reduce((sum, item) => sum + item.value, 0);
+
+  const pieDataWithLabels = pieData.map(item => ({
+    ...item,
+    text: item.value / total > 0.05 ? `${item.value}` : '', // hide if <5% of total
+  }));
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-evenly',
-        }}>
+      <Text style={styles.header}>Orders Distribution Across Zones</Text>
+      <View style={styles.row}>
         <PieChart
-          data={pieData}
+          data={pieDataWithLabels}
           donut
           showText
-          textColor="black"
+          textColor="white"
           radius={80}
-          innerRadius={50}
-          textSize={14}
+          textSize={8}
+          showValuesAsLabels
           centerLabelComponent={() => (
             <Text style={styles.centerText}>Orders</Text>
           )}
@@ -53,7 +56,9 @@ const DonutChart: React.FC<DonutChartProps> = ({data}) => {
           {data.map(item => (
             <View key={item.key} style={styles.legendItem}>
               <View style={[styles.colorBox, {backgroundColor: item.color}]} />
-              <Text style={styles.legendText}>{item.key}</Text>
+              <Text style={styles.legendText}>
+                {item.key} : {item.value}
+              </Text>
             </View>
           ))}
         </View>
@@ -63,6 +68,12 @@ const DonutChart: React.FC<DonutChartProps> = ({data}) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    textAlign: 'center',
+    marginBottom: 8,
+    fontSize: 16,
+    fontWeight: '600',
+  },
   container: {
     backgroundColor: '#fff',
     padding: 16,
@@ -71,6 +82,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   centerText: {
     fontSize: 16,

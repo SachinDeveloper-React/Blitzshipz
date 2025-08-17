@@ -12,6 +12,7 @@ import {
   EditOrderScreen,
   EditProfileScreen,
   FaqScreen,
+  GetRatesScreen,
   InvoiceScreen,
   MyDocumentsScreen,
   MyProductScreen,
@@ -31,6 +32,7 @@ import {
 import {useAuthStore} from '../store';
 import DrawerNavigator from './DrawerNavigator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {KeyboardProvider} from 'react-native-keyboard-controller';
 
 type Props = {};
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -101,15 +103,21 @@ const AppNavigator = (props: Props) => {
           />
           <RootStack.Screen
             name="ChatSupportScreen"
-            component={ChatSupportScreen}
-            options={() => ({
+            options={{
               headerShown: true,
               headerTitle: 'Chat Support',
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,
               headerTitleAlign: 'left',
-            })}
-          />
+            }}>
+            {({navigation, route}) => (
+              <KeyboardProvider
+                navigationBarTranslucent={false}
+                statusBarTranslucent={true}>
+                <ChatSupportScreen navigation={navigation} route={route} />
+              </KeyboardProvider>
+            )}
+          </RootStack.Screen>
           <RootStack.Screen
             name="ProfileOtherDetailsScreen"
             component={ProfileOtherDetailsScreen}
@@ -256,6 +264,16 @@ const AppNavigator = (props: Props) => {
             component={SellerScreen}
             options={() => ({
               headerTitle: 'Create Seller',
+              headerShown: true,
+              headerBackButtonDisplayMode: 'minimal',
+              headerBackButtonMenuEnabled: true,
+            })}
+          />
+          <RootStack.Screen
+            name="GetRatesScreen"
+            component={GetRatesScreen}
+            options={() => ({
+              headerTitle: 'Rates',
               headerShown: true,
               headerBackButtonDisplayMode: 'minimal',
               headerBackButtonMenuEnabled: true,

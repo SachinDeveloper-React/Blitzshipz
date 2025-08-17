@@ -16,6 +16,7 @@ export {
   MyDocumentsScreen,
   SellerScreen,
   PrintLabelScreen,
+  GetRatesScreen,
 } from './Common';
 export {
   DashboardScreen,

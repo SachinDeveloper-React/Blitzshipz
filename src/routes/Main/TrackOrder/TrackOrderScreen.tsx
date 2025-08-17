@@ -255,6 +255,14 @@ const TrackOrderScreen = ({
             maxToRenderPerBatch={10}
             removeClippedSubviews
             windowSize={10}
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            ListFooterComponent={() =>
+              loading.loadMoreTrackOrderData ? (
+                <ActivityIndicator size="small" />
+              ) : null
+            }
           />
           <FilterModal
             visible={filterModalVisible}
