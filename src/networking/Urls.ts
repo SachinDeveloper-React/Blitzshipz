@@ -66,6 +66,8 @@ export const URLS = {
     CREATEORDER: 'orders/create-order',
     EDITORDER: '/orders/edit-order/',
     DELETEORDER: '/orders/delete-order-manifest?orderId=',
+    MAKEORDERLIVE: '/orders/make-order-live',
+    BATCHMAKEORDERLIVE: '/orders/batch-make-orders-live',
   },
   PRODUCT: {
     GETALLCATEGORY: 'orders/product/get-all-category',

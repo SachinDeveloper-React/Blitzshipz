@@ -269,7 +269,46 @@ const CreateOrderApi = {
 
       return responseHandler(response);
     } catch (error) {
-      console.log('error', error);
+      console.log('getBatchRateList error', error);
+      return errorHandler(error);
+    }
+  },
+
+  createOrderLive: async (body: {
+    orderId: string;
+    weight: number;
+    amount: number;
+    vendorId: string;
+  }) => {
+    try {
+      const response = await ApiClient.post(
+        URLS.CREATEORDER.MAKEORDERLIVE,
+        body,
+      );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('createOrderLive error', error);
+      return errorHandler(error);
+    }
+  },
+  createBatchOrderLive: async (body: {
+    strategyType: string;
+    orderChoices: {
+      orderId: string;
+      vendorCode: string;
+      amount: number;
+      weight: number;
+    }[];
+    vendorCode: string;
+  }) => {
+    try {
+      const response = await ApiClient.post(
+        URLS.CREATEORDER.BATCHMAKEORDERLIVE,
+        body,
+      );
+      return responseHandler(response);
+    } catch (error) {
+      console.log('createBatchOrderLive error', error);
       return errorHandler(error);
     }
   },

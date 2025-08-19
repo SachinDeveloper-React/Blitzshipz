@@ -3,7 +3,7 @@ import {useCreateOrderStore, useOrderStore} from '../../store';
 import {CreateOrderApi} from '../../networking';
 import {showToast} from '../../utils';
 import {OrderItem} from '../../types';
-import {navigate} from '../../navigation';
+import {goBack, navigate} from '../../navigation';
 import {Alert} from 'react-native';
 
 type Props = {};
@@ -172,6 +172,50 @@ const useBookmyOrderAndRateService = () => {
     await fetchOrders(false, false, 0, filterForm);
   };
 
+  const createOrderLive = async (body: {
+    orderId: string;
+    weight: number;
+    amount: number;
+    vendorId: string;
+  }) => {
+    try {
+      const response = await CreateOrderApi.createOrderLive(body);
+      console.log('response', response);
+      if (response?.code === 200) {
+        if (response?.data?.statusCode === 200) {
+          const message =
+            response?.data?.message ||
+            'Congractulations! Your order is live now!';
+
+          showToast(message);
+
+          goBack();
+
+          await fetchOrders(false, false, 0, filterForm);
+        } else {
+          const message =
+            response?.data?.message ||
+            'Failed to create order. Please try again.';
+          console.warn('[CreateOrderLive] API responded with error:', message);
+          showToast(message);
+        }
+        // TODO: Handle success (e.g., update state, navigate, etc.)
+      } else {
+        const message =
+          response?.data?.message ||
+          'Failed to create order. Please try again.';
+        console.warn('[CreateOrderLive] API responded with error:', message);
+        showToast(message);
+      }
+    } catch (error: any) {
+      console.error(
+        '[CreateOrderLive] Unexpected error occurred:',
+        error?.message || error,
+      );
+      showToast('An unexpected error occurred. Please try again later.');
+    }
+  };
+
   // Utils functions
 
   const handleEdit = (item: any) => {
@@ -242,7 +286,7 @@ const useBookmyOrderAndRateService = () => {
     // setSelectedOrders([]);
 
     navigate('GetRatesScreen', {
-      ids: selectedOrders.flatMap(item => item.id),
+      items: selectedOrders,
     });
   };
 
@@ -285,6 +329,7 @@ const useBookmyOrderAndRateService = () => {
     filtermodalVisible,
     setFilterModalVisible,
     applyFilter,
+    createOrderLive,
   };
 };
 

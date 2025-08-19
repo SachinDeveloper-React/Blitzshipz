@@ -3,12 +3,12 @@ import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {CustomButton} from '../../../../../../components';
 
-const ShippingMethodCard = ({vendorOptions}: any) => {
+const ShippingMethodCard = ({vendorOptions, onSelect, batchLoading}: any) => {
   const [isSelected, setIsSelected] = useState(true); // radio button state
 
   const chartData = Object.values(vendorOptions).map((vendor: any) => ({
     label: vendor.vendorName,
-    value: vendor.vendorName, // use vendorName as unique value
+    value: vendor.vendorCode,
     amount: vendor.totalAmount,
   }));
 
@@ -62,8 +62,10 @@ const ShippingMethodCard = ({vendorOptions}: any) => {
       </View>
 
       <CustomButton
+        loading={batchLoading}
+        disabled={batchLoading}
         title="Placed Order"
-        onPress={() => Alert.alert('Comming Soon')}
+        onPress={() => onSelect(chartData, selectedVendor)}
       />
     </View>
   );

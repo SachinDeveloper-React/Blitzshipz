@@ -12,7 +12,8 @@ const RateScreen = ({
   route,
 }: StackScreenProps<RootStackParamList, 'RateScreen'>) => {
   const {id} = route.params;
-  const {fetchRates, ratesData} = useBookmyOrderAndRateService();
+  const {fetchRates, ratesData, createOrderLive} =
+    useBookmyOrderAndRateService();
 
   useEffect(() => {
     fetchRates(id);
@@ -33,7 +34,12 @@ const RateScreen = ({
               zone={item.zone}
               price={item.amount}
               onChoose={() => {
-                console.log('Chosen vendor:', item.vendorCode);
+                createOrderLive({
+                  amount: item.amount,
+                  orderId: id,
+                  vendorId: item.vendorCode,
+                  weight: item?.weight,
+                });
               }}
             />
           )}
@@ -51,7 +57,13 @@ const RateScreen = ({
               zone={item.zone}
               price={item.amount}
               onChoose={() => {
-                console.log('Chosen vendor:', item.vendorCode);
+                createOrderLive({
+                  amount: item.amount,
+                  orderId: id,
+                  vendorId: item.vendorCode,
+                  weight: item?.weight,
+                });
+                // console.log('Chosen vendor:', item, ratesData?.advancePricing);
               }}
             />
           )}

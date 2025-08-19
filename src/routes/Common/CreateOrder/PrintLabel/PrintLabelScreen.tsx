@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -12,6 +13,7 @@ import {NotFound} from '../../../../layout';
 import {CustomCard, CustomText} from '../../../../components';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {DrawerStackParamList} from '../../../../navigation/types';
+import LabelOptionsModal from './components/LabelOptionsModal';
 
 type Props = {};
 
@@ -30,6 +32,10 @@ const PrintLabelScreen = ({
     toggleSelectAll,
     toggleSelectOrder,
     askPageCountAndPrintLabel,
+    modalLoading,
+    setModalLoading,
+    printAllLabel,
+    printLabelLoading,
   } = usePrintLabelService();
 
   useEffect(() => {
@@ -115,6 +121,9 @@ const PrintLabelScreen = ({
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={10}
         removeClippedSubviews
+        ListFooterComponent={() => {
+          return <>{loading.loadMoreLoading ? <ActivityIndicator /> : null}</>;
+        }}
         refreshControl={
           <RefreshControl
             refreshing={loading.refreshLoading}
@@ -125,6 +134,15 @@ const PrintLabelScreen = ({
         onEndReachedThreshold={0.5}
         ListEmptyComponent={<NotFound title="No data found" />}
       />
+
+      <LabelOptionsModal
+        visible={modalLoading}
+        loading={printLabelLoading}
+        onClose={() => setModalLoading(false)}
+        onDownload={(perPage, showReturn, showMobile) => {
+          printAllLabel(perPage as 1 | 2 | 4);
+        }}
+      />
     </View>
   );
 };
@@ -134,6 +152,7 @@ export default PrintLabelScreen;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    paddingBottom: 36,
   },
   selectionHeader: {
     flexDirection: 'row',
@@ -175,5 +194,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#007bff',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

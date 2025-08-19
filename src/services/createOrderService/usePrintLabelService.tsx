@@ -4,7 +4,7 @@ import {usePrintLabelStore} from '../../store';
 import {navigate} from '../../navigation';
 import {savePdfWithDocumentPicker, showToast} from '../../utils';
 import {Buffer} from '@craftzdog/react-native-buffer';
-import {Alert} from 'react-native';
+
 const usePrintLabelService = () => {
   const {
     appendOrder,
@@ -20,6 +20,8 @@ const usePrintLabelService = () => {
     setPagination,
   } = usePrintLabelStore();
 
+  const [printLabelLoading, setPrintLabelLoading] = useState<boolean>(false);
+  const [modalLoading, setModalLoading] = useState<boolean>(false);
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
 
@@ -57,6 +59,12 @@ const usePrintLabelService = () => {
   };
 
   const handleLoadMore = async () => {
+    if (
+      loading.loadMoreLoading ||
+      pagination?.currentPage >= pagination?.totalPages
+    ) {
+      return;
+    }
     await fetchOrders(false, true, pagination?.currentPage);
   };
 
@@ -96,33 +104,12 @@ const usePrintLabelService = () => {
   };
 
   const askPageCountAndPrintLabel = () => {
-    Alert.alert(
-      'Select Labels per Page',
-      'How many labels per page would you like?',
-      [
-        {
-          text: '1 per page',
-          onPress: () => printAllLabel(1),
-        },
-        {
-          text: '2 per page',
-          onPress: () => printAllLabel(2),
-        },
-        {
-          text: '4 per page',
-          onPress: () => printAllLabel(4),
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: true},
-    );
+    setModalLoading(true);
   };
 
   const printAllLabel = async (totalPage: 1 | 2 | 4) => {
     try {
+      setPrintLabelLoading(true);
       const response = await CreateOrderApi.savePrintLabel(
         totalPage,
         selectedOrders,
@@ -136,6 +123,7 @@ const usePrintLabelService = () => {
         const check = await savePdfWithDocumentPicker(pdfBase64, fileName);
         if (check) {
           setSelectedOrders([]);
+          setModalLoading(false);
         }
       } else {
         showToast('Failed to generate the label. Please try again later.');
@@ -145,6 +133,8 @@ const usePrintLabelService = () => {
       showToast(
         error.message || 'An unexpected error occurred while saving the label.',
       );
+    } finally {
+      setPrintLabelLoading(false);
     }
   };
 
@@ -164,6 +154,9 @@ const usePrintLabelService = () => {
     handlePress,
     printAllLabel,
     askPageCountAndPrintLabel,
+    modalLoading,
+    setModalLoading,
+    printLabelLoading,
   };
 };
 

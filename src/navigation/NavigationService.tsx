@@ -1,4 +1,7 @@
-import {createNavigationContainerRef} from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  StackActions,
+} from '@react-navigation/native';
 import {RootStackParamList} from './types';
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
@@ -14,5 +17,11 @@ export function navigate<RouteName extends keyof RootStackParamList>(
 export function goBack() {
   if (navigationRef?.isReady()) {
     return navigationRef?.goBack();
+  }
+}
+
+export function popToTop() {
+  if (navigationRef?.isReady()) {
+    navigationRef.dispatch(StackActions.popToTop());
   }
 }

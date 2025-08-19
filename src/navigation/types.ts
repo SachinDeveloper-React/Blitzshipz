@@ -115,7 +115,7 @@ export type RootStackParamList = {
     } | null;
   };
   RateScreen: {
-    id: string;
+    id: any;
   };
   OrderDetailsScreen: {
     orderDetailsData: OrderItem;
@@ -130,6 +130,6 @@ export type RootStackParamList = {
   SellerScreen: undefined;
   EditOrderScreen: undefined;
   GetRatesScreen: {
-    ids: string[];
+    items: OrderItem[];
   };
 };
